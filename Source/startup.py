@@ -10,6 +10,7 @@ import BotpySE as bp
 import chatexchange as ce
 import os
 import getpass
+from HalflifeListener import *
 
 if 'PulseEmail' in os.environ:
     email = os.environ['PulseEmail']
@@ -30,6 +31,14 @@ bot = bp.Bot("pulsemonitor", client, commands, [65945])
 bot.start_bot()
 
 bot.add_privilege_type(1, "owner")
-bot.rooms[0].add_privileged_user(181293, bot.rooms[0].get_privilege_type_by_name("owner"))
 
 bot.add_essential_background_tasks()
+
+rooms = list()
+
+for each_room in bot.rooms:
+    rooms.append(each_room.room)
+
+halflife = HalflifeListener(bot.rooms[0].room, rooms)
+
+halflife.start()
