@@ -1,0 +1,2 @@
+chatexchange>=0.0.3
+BotpySE
