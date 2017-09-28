@@ -17,7 +17,7 @@ class HalflifeListener:
 
     def on_message_handler(self, ws, message):
         for each_room in self.report_rooms:
-            each_room.send_message("    " + message)
+            each_room.send_message(message)
 
     def start(self):
         self.ws_listener.start()
