@@ -5,6 +5,7 @@ installed on your computer.
 
 You will probably want to install chatexchange from source.
 Older versions have bugs which prevent PulseMonitor from working properly.
+(Unfortunately, a properly versioned dependency cannot yet be specified.)
 
     git clone https://github.com/Manishearth/ChatExchange
     pip install $(pwd)/ChatExchange
