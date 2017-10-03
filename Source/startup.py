@@ -24,7 +24,7 @@ else:
 
 client = ce.Client("stackexchange.com", email, password)
 
-commands = [bp.CommandAlive, bp.CommandStop, bp.CommandListRunningCommands]
+commands = bp.all_commands
 
 bot = bp.Bot("pulsemonitor", client, commands, [65945])
 
@@ -41,4 +41,4 @@ for each_room in bot.rooms:
 
 halflife = HalflifeListener(bot.rooms[0].room, rooms)
 
-halflife.start()
+#halflife.start()
