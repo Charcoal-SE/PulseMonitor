@@ -21,3 +21,6 @@ class HalflifeListener:
 
     def start(self):
         self.ws_listener.start()
+
+    def stop(self):
+        self.ws_listener.stop()
