@@ -31,15 +31,10 @@ class DeepSmokeListener:
        # print("-------------------------------------------")
        # pprint.pprint(data)
         
-        for bad_ns in data['bad_ns']:
-            if bad_ns:
-                self.report("Potential spam because of bad ns: '" + data['title'] + "' on `" + data['site'] + "`")
-            break
-
         ds = data['deepsmoke'][0]
         ds_response = data['deepsmoke'][1]
 
-        if ds:
+        if ds and not data['site'] == "ru.stackoverflow.com" and not data['site'] == "ja.stackoverflow.com" and not data['site'] == "rus.stackexchange.com":
             self.report("Potential spam because of deepsmoke analysis: [" + data['title'] + "]("+ self.get_link(data) + ") on `" + data['site'] + "` with score `" + str(ds_response['score']) + "`")
             return
 
