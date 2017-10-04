@@ -34,7 +34,9 @@ class DeepSmokeListener:
         ds = data['deepsmoke'][0]
         ds_response = data['deepsmoke'][1]
 
-        if ds and not data['site'] == "ru.stackoverflow.com" and not data['site'] == "ja.stackoverflow.com" and not data['site'] == "rus.stackexchange.com":
+        if ds and data['site'] not in [
+                "ru.stackoverflow.com", "ja.stackoverflow.com",
+                "rus.stackexchange.com"]:
             self.report("Potential spam because of deepsmoke analysis: [" + data['title'] + "]("+ self.get_link(data) + ") on `" + data['site'] + "` with score `" + str(ds_response['score']) + "`")
             return
 
