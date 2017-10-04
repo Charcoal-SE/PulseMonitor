@@ -5,7 +5,7 @@ RUN apk add --no-cache git && \
     apk add --no-cache py3-greenlet && \
     adduser -D pulsemonitor && \
     cd /home/pulsemonitor && \
-    su pulsemonitor mkdir .pulsemonitor && \
+    su pulsemonitor sh -c 'mkdir .pulsemonitor' && \
     git clone https://github.com/Manishearth/ChatExchange && \
     : "######## TODO: replace with official repo" && \
     git clone https://github.com/tripleee/PulseMonitor && \
