@@ -12,13 +12,14 @@ import os
 import getpass
 from HalflifeListener import *
 from DeepSmokeListener import *
+from CommandUpdate import *
 
-if 'PulseEmail' in os.environ:
+if 'ChatBotEmail' in os.environ:
     email = os.environ['PulseEmail']
 else:
     email = input("Email: ")
 
-if 'PulsePass' in os.environ:
+if 'ChatBotPass' in os.environ:
     password = os.environ['PulsePass']
 else:
     password = getpass.getpass("Password: ")
@@ -26,6 +27,7 @@ else:
 client = ce.Client("stackexchange.com", email, password)
 
 commands = bp.all_commands
+commands.append(CommandUpdate)
 
 bot = bp.Bot("pulsemonitor", client, commands, [65945])
 
@@ -44,7 +46,7 @@ halflife = HalflifeListener(bot.rooms[0].room, rooms)
 deep_smoke = DeepSmokeListener(bot.rooms[0].room, rooms)
 
 #halflife.start()
-deep_smoke.start()
+#deep_smoke.start()
 
 while bot.is_alive:
     pass
