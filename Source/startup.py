@@ -14,12 +14,12 @@ from HalflifeListener import *
 from DeepSmokeListener import *
 from CommandUpdate import *
 
-if 'ChatBotEmail' in os.environ:
+if 'PulseEmail' in os.environ:
     email = os.environ['PulseEmail']
 else:
     email = input("Email: ")
 
-if 'ChatBotPass' in os.environ:
+if 'PulsePass' in os.environ:
     password = os.environ['PulsePass']
 else:
     password = getpass.getpass("Password: ")
