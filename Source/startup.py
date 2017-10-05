@@ -27,7 +27,7 @@ client = ce.Client("stackexchange.com", email, password)
 
 commands = bp.all_commands
 
-bot = bp.Bot("pulsemonitor", client, commands, [65945, 64277])
+bot = bp.Bot("pulsemonitor", client, commands, [65945])
 
 bot.start_bot()
 
