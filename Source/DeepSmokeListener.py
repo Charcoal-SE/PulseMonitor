@@ -17,9 +17,12 @@ class DeepSmokeListener:
         self.ws_link = "ws://smokey-deepsmoke2903.cloudapp.net:8888/"
         self.ws_listener = WebsocketListener(self.ws_link, self.on_message_handler)
         
-    def report(self, message):
-        for each_room in self.report_rooms:
-            each_room.send_message("[ [DeepSmoke](https://git.io/vdlxx) | [PM](https://git.io/vdlx5) ] " + message)
+    def report(self, message, error_room=False):
+        if not error_room:
+            for each_room in self.report_rooms:
+                each_room.send_message("[ [DeepSmoke](https://git.io/vdlxx) | [PM](https://git.io/vdlx5) ] " + message)
+        else:
+            self.error_room.send_message("[ [DeepSmoke](https://git.io/vdlxx) | [PM](https://git.io/vdlx5) ] " + message)
 
     def get_link(self, data):
         return "https://{0}/q/{1}".format(data["site"], data["question_id"])
@@ -33,12 +36,17 @@ class DeepSmokeListener:
         
         ds = data['deepsmoke'][0]
         ds_response = data['deepsmoke'][1]
+        score = ds_response['score']
 
-        if ds and data['site'] not in [
+        print("Post score: " + str(score))
+
+        if ds and score > 0.9 and data['site'] not in [
                 "ru.stackoverflow.com", "ja.stackoverflow.com",
                 "rus.stackexchange.com"]:
             self.report("Potential spam because of deepsmoke analysis: [" + data['title'] + "]("+ self.get_link(data) + ") on `" + data['site'] + "` with score `" + str(ds_response['score']) + "`")
             return
+        elif score > 0.7:
+            self.report("Potential spam because of deepsmoke analysis: [" + data['title'] + "]("+ self.get_link(data) + ") on `" + data['site'] + "` with score `" + str(ds_response['score']) + "`", error_room=True)
 
     def start(self):
         self.ws_listener.start()
