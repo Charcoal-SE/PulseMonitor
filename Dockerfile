@@ -5,10 +5,9 @@ RUN apk add --no-cache git && \
     apk add --no-cache py3-greenlet && \
     adduser -D pulsemonitor && \
     cd /home/pulsemonitor && \
-    su pulsemonitor sh -c 'mkdir .pulsemonitor' && \
-    git clone https://github.com/Manishearth/ChatExchange && \
-    : "######## TODO: replace with official repo" && \
-    git clone https://github.com/tripleee/PulseMonitor && \
+    su pulsemonitor sh -c 'mkdir .pulsemonitor && \
+      git clone https://github.com/Manishearth/ChatExchange && \
+      git clone https://github.com/Fortunate-Man/PulseMonitor' && \
     pip install /home/pulsemonitor/ChatExchange && \
     : "######## FIXME: BotpySE requirements not yet declared in PyPi" && \
     pip install tabulate && \
