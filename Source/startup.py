@@ -45,11 +45,11 @@ for each_room in bot.rooms:
 halflife = HalflifeListener(bot.rooms[0].room, rooms)
 deep_smoke = DeepSmokeListener(bot.rooms[0].room, rooms)
 
-#halflife.start()
+halflife.start()
 deep_smoke.start()
 
 while bot.is_alive:
     pass
 
-#halflife.stop()
+halflife.stop()
 deep_smoke.stop()
