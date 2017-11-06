@@ -14,12 +14,12 @@ from HalflifeListener import *
 from DeepSmokeListener import *
 from CommandUpdate import *
 
-if 'ChatBotEmail' in os.environ:
+if 'PulseEmail' in os.environ:
     email = os.environ['PulseEmail']
 else:
     email = input("Email: ")
 
-if 'ChatBotPass' in os.environ:
+if 'PulsePass' in os.environ:
     password = os.environ['PulsePass']
 else:
     password = getpass.getpass("Password: ")
@@ -45,11 +45,11 @@ for each_room in bot.rooms:
 halflife = HalflifeListener(bot.rooms[0].room, rooms)
 deep_smoke = DeepSmokeListener(bot.rooms[0].room, rooms)
 
-#halflife.start()
+halflife.start()
 deep_smoke.start()
 
 while bot.is_alive:
     pass
 
-#halflife.stop()
+halflife.stop()
 deep_smoke.stop()
