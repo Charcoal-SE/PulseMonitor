@@ -2,8 +2,8 @@
 # Simple wrapper for invoking from Docker image
 
 cd "$(dirname "$0")"/PulseMonitor
-PulseEmail='XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX' \
-PulsePass='XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX' \
 while true; do
+    PulseEmail='XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX' \
+    PulsePass='XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX' \
     python3 ./Source/startup.py
 done
