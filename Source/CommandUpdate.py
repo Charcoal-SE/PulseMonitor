@@ -6,7 +6,7 @@
 # This file is licensed under the MIT License.
 #
 
-from BotpySE import Command
+from BotpySE import Command, Utilities
 import subprocess
 
 class CommandUpdate(Command):
@@ -18,4 +18,4 @@ class CommandUpdate(Command):
         print("UPDATE")
         subprocess.call(['git', 'pull', 'origin', 'master'])
         self.reply("Updating...")
-        
+        Utilities.should_reboot = True
