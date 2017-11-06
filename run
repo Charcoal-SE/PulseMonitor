@@ -4,4 +4,6 @@
 cd "$(dirname "$0")"/PulseMonitor
 PulseEmail='XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX' \
 PulsePass='XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX' \
-python3 ./Source/startup.py
+while true; do
+    python3 ./Source/startup.py
+done
