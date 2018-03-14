@@ -7,7 +7,8 @@ RUN apk add --no-cache git && \
     cd /home/pulsemonitor && \
     su pulsemonitor sh -c 'mkdir .pulsemonitor && \
       git clone https://github.com/Manishearth/ChatExchange && \
-      git clone https://github.com/Fortunate-Man/PulseMonitor' && \
+      : git clone https://github.com/Fortunate-Man/PulseMonitor && \
+      git clone https://github.com/tripleee/PulseMonitor && : DEBUG' && \
     pip install /home/pulsemonitor/ChatExchange && \
     : "######## FIXME: BotpySE requirements not yet declared in PyPi" && \
     pip install tabulate && \
