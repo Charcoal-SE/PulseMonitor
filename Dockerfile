@@ -14,7 +14,7 @@ RUN apk add --no-cache git && \
     pip install -r /home/pulsemonitor/PulseMonitor/requirements.txt && \
     rm -rf /var/cache/apk/*
 
-ADD room_65945_name_Charcoal_Test_privileged_users /home/halflife/.pulsemonitor/
+ADD room_65945_name_Charcoal_Test_privileged_users /home/pulsemonitor/.pulsemonitor/
 ADD run /home/pulsemonitor/run
 #ADD docker-cron-15min /etc/periodic/15min/git-pull-sd
 
