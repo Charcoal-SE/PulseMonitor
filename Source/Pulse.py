@@ -28,7 +28,7 @@ class Pulse:
 
         bot.add_essential_background_tasks()
 
-        roomlist = [r.room for r in bot.rooms]
+        roomlist = bot.rooms
         halflife = HalflifeListener(roomlist[0], roomlist, notifications)
         #deep_smoke = DeepSmokeListener(roomlist[0], roomlist, notifications)
 
