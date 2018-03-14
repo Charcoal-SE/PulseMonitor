@@ -21,4 +21,5 @@ ADD run /home/pulsemonitor/run
 
 #EXPOSE 8888
 
-CMD ["su", "-", "pulsemonitor", "/home/pulsemonitor/run"]
+USER pulsemonitor
+CMD ["/home/pulsemonitor/run"]
