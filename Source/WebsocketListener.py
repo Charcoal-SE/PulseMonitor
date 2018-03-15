@@ -10,9 +10,10 @@ import websocket
 import threading
 
 class WebsocketListener:
-    def __init__(self, websocket_link, on_message_callback):
+    def __init__(self, websocket_link, on_message_callback, notifications=None):
         self.websocket_link = websocket_link
         self.on_message_callback = on_message_callback
+        self.notifications = notifications
         self.closed = True
 
     def on_error(self, ws, error):

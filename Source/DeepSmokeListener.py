@@ -11,16 +11,24 @@ import json
 import pprint
 
 class DeepSmokeListener:
-    def __init__(self, error_room, report_rooms):
+    def __init__(self, error_room, report_rooms, notifications=None):
         self.error_room = error_room
         self.report_rooms = report_rooms
+        self.notifications = notifications
         self.ws_link = "ws://smokey-deepsmoke2903.cloudapp.net:8888/"
         self.ws_listener = WebsocketListener(self.ws_link, self.on_message_handler)
         
     def report(self, message, error_room=False):
         if not error_room:
             for each_room in self.report_rooms:
-                each_room.send_message("[ [DeepSmoke](https://git.io/vdlxx) | [PM](https://git.io/vdlx5) ] " + message)
+                if self.notifications is not None:
+                    this_message = self.notifications.filter_post(
+                        each_room.id, message)
+                else:
+                    this_message = message
+                each_room.send_message(
+                    "[ [DeepSmoke](https://git.io/vdlxx) | "
+                        "[PM](https://git.io/vdlx5) ] " + this_message)
         else:
             self.error_room.send_message("[ [DeepSmoke](https://git.io/vdlxx) | [PM](https://git.io/vdlx5) ] " + message)
 
