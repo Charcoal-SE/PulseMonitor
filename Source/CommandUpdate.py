@@ -18,4 +18,4 @@ class CommandUpdate(Command):
         print("UPDATE")
         subprocess.call(['git', 'pull', 'origin', 'master'])
         self.reply("Updating...")
-        Utilities.should_reboot = True
+        Utilities.StopReason.reboot = True

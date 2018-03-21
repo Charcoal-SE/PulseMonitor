@@ -21,6 +21,8 @@ You might want to add yourself as a privileged user. Load the file
 with `pickle`, change one of the user ID:s to your own, and save back
 and overwrite the pickle file.
 
+To enable Redunda, paste your redunda key in a file called `redunda_key.txt` at `~/.pulsemonitor/`.
+
 Then run the `startup.py` file.
 
     python3 ./Source/startup.py

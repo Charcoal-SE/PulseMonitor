@@ -5,10 +5,11 @@ from DeepSmokeListener import *
 from CommandUpdate import *
 from Notifications import *
 
+import os
+import subprocess
+
 class Pulse:
     def __init__ (self, nick, email, password, rooms):
-        client = ce.Client("stackexchange.com", email, password)
-
         commands = bp.all_commands
         commands.extend([
             CommandUpdate,
@@ -17,18 +18,35 @@ class Pulse:
             CommandUnnotify
             ])
 
-        bot = bp.Bot(nick, client, commands, rooms)
+        self._bot_header = '[ [PulseMonitor](https://github.com/Charcoal-SE/PulseMonitor) ]'
 
-        notifications = Notifications(rooms)
-        bot.chatcommunicate.command_manager.notifications = notifications
+        bot = bp.Bot(nick, commands, rooms, [], "stackexchange.com", email, password)
 
-        bot.start_bot()
+        try:
+            with open(bot._storage_prefix + 'redunda_key.txt', 'r') as file_handle:
+                key = file_handle.readlines()[0].rstrip('\n')
+            bot.set_redunda_key(key)
+        except IOError as ioerr:
+            print(str(ioerr))
+            print("Bot is not integrated with Redunda.")
 
+        bot.add_file_to_sync({"name": bot._storage_prefix + 'notifications.json', "ispickle": False, "at_home": False})
+        bot.redunda_init(bot_version=self._get_current_hash())
+        bot.set_redunda_default_callbacks()
+        bot.set_redunda_status(True)
+
+        bot.set_startup_message(self._bot_header + " started on " + bot._location + ".")
+        bot.set_standby_message(self._bot_header + " running on " + bot._location + " shifting to standby.")
+        bot.set_failover_message(self._bot_header + " running on " + bot._location + " received failover.")
+
+        notifications = Notifications(rooms, bot._storage_prefix + 'notifications.json')
+        bot._command_manager.notifications = notifications
+
+        bot.start()
         bot.add_privilege_type(1, "owner")
+        bot.set_room_owner_privs_max()
 
-        bot.add_essential_background_tasks()
-
-        roomlist = bot.rooms
+        roomlist = bot._rooms
         halflife = HalflifeListener(roomlist[0], roomlist, notifications)
         #deep_smoke = DeepSmokeListener(roomlist[0], roomlist, notifications)
 
@@ -40,3 +58,6 @@ class Pulse:
 
         halflife.stop()
         #deep_smoke.stop()
+
+    def _get_current_hash(self):
+        return subprocess.run(['git', 'log', '-n', '1', '--pretty=format:"%H"'], stdout=subprocess.PIPE).stdout.decode('utf-8')[1:7]
