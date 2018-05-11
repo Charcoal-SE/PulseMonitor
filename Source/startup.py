@@ -13,4 +13,4 @@ if 'PulsePass' in os.environ:
 else:
     password = getpass.getpass("Password: ")
 
-Pulse("PulseMonitor", email, password, rooms=[65945])
+Pulse("PulseMonitor", email, password, rooms=[167908])

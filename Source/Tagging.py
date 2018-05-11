@@ -29,11 +29,13 @@ class TagManager:
 
     def add(self, tag):
         self.tags.append(tag)
+        self.save()
 
     def remove(self, name):
         for tag in self.tags:
             if tag.name == name:
                 self.tags.remove(tag)
+                self.save()
                 return True
         return False
 

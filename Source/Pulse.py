@@ -25,7 +25,7 @@ class Pulse:
 
         self._bot_header = '[ [PulseMonitor](https://github.com/Charcoal-SE/PulseMonitor) ]'
 
-        bot = bp.Bot(nick, commands, rooms, [], "stackexchange.com", email, password)
+        bot = bp.Bot(nick, commands, rooms, [], "stackoverflow.com", email, password)
 
         try:
             with open(bot._storage_prefix + 'redunda_key.txt', 'r') as file_handle:
@@ -55,7 +55,7 @@ class Pulse:
         bot.set_room_owner_privs_max()
 
         roomlist = bot._rooms
-        halflife = HalflifeListener(roomlist[0], roomlist, notifications)
+        halflife = HalflifeListener(roomlist[0], roomlist, notifications, bot._command_manager.tags)
         #deep_smoke = DeepSmokeListener(roomlist[0], roomlist, notifications)
 
         halflife.start()
