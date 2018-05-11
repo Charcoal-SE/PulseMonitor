@@ -8,16 +8,19 @@
 
 from WebsocketListener import WebsocketListener
 
-
 class HalflifeListener:
-    def __init__(self, error_room, report_rooms, notifications=None):
+    def __init__(self, error_room, report_rooms, notifications=None, tags=None):
         self.error_room = error_room
         self.report_rooms = report_rooms
         self.notifications = notifications
+        self.tags = tags
         self.ws_link = "ws://ec2-52-208-37-129.eu-west-1.compute.amazonaws.com:8888/"
         self.ws_listener = WebsocketListener(self.ws_link, self.on_message_handler)
 
     def on_message_handler(self, ws, message):
+        if self.tags is not None:
+            message = self.tags.filter_post(message)
+ 
         for each_room in self.report_rooms:
             if self.notifications is not None:
                 this_message = self.notifications.filter_post(
