@@ -4,18 +4,23 @@ from HalflifeListener import *
 from DeepSmokeListener import *
 from CommandUpdate import *
 from Notifications import *
+from Tagging import *
+from commands import *
 
 import os
 import subprocess
 
 class Pulse:
     def __init__ (self, nick, email, password, rooms):
-        commands = bp.all_commands
+        commands = default_commands
         commands.extend([
             CommandUpdate,
             CommandNotifications,
             CommandNotify,
-            CommandUnnotify
+            CommandUnnotify,
+            CommandListTags,
+            CommandAddTag,
+            CommandRemoveTag 
             ])
 
         self._bot_header = '[ [PulseMonitor](https://github.com/Charcoal-SE/PulseMonitor) ]'
@@ -31,6 +36,7 @@ class Pulse:
             print("Bot is not integrated with Redunda.")
 
         bot.add_file_to_sync({"name": bot._storage_prefix + 'notifications.json', "ispickle": False, "at_home": False})
+        bot.add_file_to_sync({"name": bot._storage_prefix + 'tags.json', "ispickle": False, "at_home": False})
         bot.redunda_init(bot_version=self._get_current_hash())
         bot.set_redunda_default_callbacks()
         bot.set_redunda_status(True)
@@ -40,14 +46,16 @@ class Pulse:
         bot.set_failover_message(self._bot_header + " running on " + bot._location + " received failover.")
 
         notifications = Notifications(rooms, bot._storage_prefix + 'notifications.json')
+        tags = TagManager(bot._storage_prefix + 'tags.json')
         bot._command_manager.notifications = notifications
+        bot._command_manager.tags = tags
 
         bot.start()
         bot.add_privilege_type(1, "owner")
         bot.set_room_owner_privs_max()
 
         roomlist = bot._rooms
-        halflife = HalflifeListener(roomlist[0], roomlist, notifications)
+        halflife = HalflifeListener(roomlist[0], roomlist, notifications, bot._command_manager.tags)
         #deep_smoke = DeepSmokeListener(roomlist[0], roomlist, notifications)
 
         halflife.start()
