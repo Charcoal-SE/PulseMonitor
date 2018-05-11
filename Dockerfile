@@ -16,6 +16,7 @@ RUN apk add --no-cache git && \
     rm -rf /var/cache/apk/*
 
 ADD --chown=pulsemonitor:pulsemonitor room_65945_name_Charcoal_Test_privileged_users /home/pulsemonitor/.pulsemonitor/
+ADD --chown=pulsemonitor:pulsemonitor redunda_key.txt /home/pulsemonitor/.pulsemonitor/
 ADD run /home/pulsemonitor/run
 #ADD docker-cron-15min /etc/periodic/15min/git-pull-sd
 
