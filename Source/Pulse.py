@@ -35,8 +35,8 @@ class Pulse:
             print(str(ioerr))
             print("Bot is not integrated with Redunda.")
 
-        bot.add_file_to_sync({"name": bot._storage_prefix + 'notifications.json', "ispickle": False, "at_home": False})
         bot.add_file_to_sync({"name": bot._storage_prefix + 'tags.json', "ispickle": False, "at_home": False})
+        bot.add_file_to_sync({"name": bot._storage_prefix + 'notifications.json', "ispickle": False, "at_home": False})
         bot.redunda_init(bot_version=self._get_current_hash())
         bot.set_redunda_default_callbacks()
         bot.set_redunda_status(True)
