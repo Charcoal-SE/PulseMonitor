@@ -103,6 +103,6 @@ class CommandRemoveTag(bp.Command):
         tag_name = self.arguments[0]
         
         if self.command_manager.tags.remove(tag_name):
-            self.reply("Removed [tag:{0}] successfully.", tag_name)
+            self.reply("Removed [tag:{0}] successfully.".format(tag_name))
         else:
             self.reply("The specified tag does not exist; have you made a typo or specified that tag in a different case?")  
