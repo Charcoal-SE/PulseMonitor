@@ -58,7 +58,7 @@ class TagManager:
 class CommandListTags(bp.Command):
     @staticmethod
     def usage():
-        return["listtags", "list tags", "tags", "all tags"]
+        return ["listtags", "list tags", "tags", "all tags"]
 
     def run(self):
         tag_list = list()
