@@ -61,7 +61,6 @@ class CommandListTags(bp.Command):
         return ["listtags", "list tags", "tags", "all tags"]
 
     def run(self):
-        print("RUNNING")
         tag_list = list()
         for tag in self.command_manager.tags.list():
             tag_list.append([tag.name, tag.regex, tag.user_name])
