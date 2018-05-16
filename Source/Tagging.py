@@ -61,13 +61,14 @@ class CommandListTags(bp.Command):
         return ["listtags", "list tags", "tags", "all tags"]
 
     def run(self):
+        print("RUNNING")
         tag_list = list()
         for tag in self.command_manager.tags.list():
             tag_list.append([tag.name, tag.regex, tag.user_name])
 
         table = tabulate.tabulate(tag_list, headers=["Name", "Regex", "Added By"], tablefmt="orgtbl")
 
-        self.post("    " + re.sub('\n', '\n    ', table))
+        self.post("    " + re.sub('\n', '\n    ', table), False)
 
 class CommandAddTag(bp.Command):
     @staticmethod
