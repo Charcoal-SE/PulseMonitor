@@ -21,7 +21,7 @@ class WebsocketListener:
     def on_error(self, ws, error):
         print("A websocket error occurred on websocket '" + self.websocket_link + "':")
         print(error)
-    
+
     def on_close(self, ws):
         self.closed = True
         print("The websocket with link '" + self.websocket_link + "' was closed.")

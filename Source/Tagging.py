@@ -20,7 +20,7 @@ class TagManager:
     def __init__(self, filename='./tags.json'):
         self.tags = list()
         self.filename = filename
-        
+
         try:
             with open(filename, 'r') as file_handle:
                 tags = jsonpickle.decode(file_handle.read())
@@ -82,7 +82,7 @@ class CommandAddTag(bp.Command):
     def run(self):
         user_id = self.message.user.id
         user_name = self.message.user.name
-        
+
         tag_name = self.arguments[0]
         regex = ' '.join(self.arguments[1:])
 
@@ -102,8 +102,8 @@ class CommandRemoveTag(bp.Command):
 
     def run(self):
         tag_name = self.arguments[0]
-        
+
         if self.command_manager.tags.remove(tag_name):
             self.reply("Removed [tag:{0}] successfully.".format(tag_name))
         else:
-            self.reply("The specified tag does not exist; have you made a typo or specified that tag in a different case?")  
+            self.reply("The specified tag does not exist; have you made a typo or specified that tag in a different case?")

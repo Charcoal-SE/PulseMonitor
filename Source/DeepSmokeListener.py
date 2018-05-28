@@ -19,7 +19,7 @@ class DeepSmokeListener:
         self.notifications = notifications
         self.ws_link = "ws://smokey-deepsmoke2903.cloudapp.net:8888/"
         self.ws_listener = WebsocketListener(self.ws_link, self.on_message_handler)
-        
+
     def report(self, message, error_room=False):
         if not error_room:
             for each_room in self.report_rooms:
@@ -36,14 +36,14 @@ class DeepSmokeListener:
 
     def get_link(self, data):
         return "https://{0}/q/{1}".format(data["site"], data["question_id"])
-       
+
     def on_message_handler(self, ws, message):
         data = json.loads(message)
        # print("-------------------------------------------")
        # print("               RESTART                     ")
        # print("-------------------------------------------")
        # pprint.pprint(data)
-        
+
         ds = data['deepsmoke'][0]
         ds_response = data['deepsmoke'][1]
         score = ds_response['score']

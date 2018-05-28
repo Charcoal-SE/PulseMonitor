@@ -22,7 +22,7 @@ class Pulse:
             CommandUnnotify,
             CommandListTags,
             CommandAddTag,
-            CommandRemoveTag 
+            CommandRemoveTag
             ])
 
         self._bot_header = '[ [PulseMonitor](https://github.com/Charcoal-SE/PulseMonitor) ]'
