@@ -7,6 +7,7 @@
 #
 
 import subprocess
+import logging
 
 from BotpySE import Command, Utilities
 
@@ -17,7 +18,7 @@ class CommandUpdate(Command):
         return ["update", "pull"]
 
     def run(self):
-        print("UPDATE")
+        logging.warn("UPDATE")
         subprocess.call(['git', 'pull', 'origin', 'master'])
         self.reply("Updating...")
         Utilities.StopReason.reboot = True

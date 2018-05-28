@@ -1,5 +1,6 @@
 import os
 import subprocess
+import logging
 
 import BotpySE as bp
 import chatexchange as ce
@@ -34,8 +35,8 @@ class Pulse:
                 key = file_handle.readlines()[0].rstrip('\n')
             bot.set_redunda_key(key)
         except IOError as ioerr:
-            print(str(ioerr))
-            print("Bot is not integrated with Redunda.")
+            logging.error(str(ioerr))
+            logging.warn("Bot is not integrated with Redunda.")
 
         bot.add_file_to_sync({"name": bot._storage_prefix + 'tags.json', "ispickle": False, "at_home": False})
         bot.add_file_to_sync({"name": bot._storage_prefix + 'notifications.json', "ispickle": False, "at_home": False})

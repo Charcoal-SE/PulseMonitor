@@ -7,6 +7,7 @@
 #
 
 import threading
+import logging
 
 import websocket
 
@@ -19,8 +20,8 @@ class WebsocketListener:
         self.closed = True
 
     def on_error(self, ws, error):
-        print("A websocket error occurred on websocket '" + self.websocket_link + "':")
-        print(error)
+        logging.error("A websocket error occurred on websocket '" + self.websocket_link + "':")
+        logging.error(error)
 
     def on_close(self, ws):
         self.closed = True
