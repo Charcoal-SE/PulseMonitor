@@ -6,9 +6,11 @@
 # This file is licensed under the MIT License.
 #
 
-from WebsocketListener import WebsocketListener
 import json
 import pprint
+
+from WebsocketListener import WebsocketListener
+
 
 class DeepSmokeListener:
     def __init__(self, error_room, report_rooms, notifications=None):

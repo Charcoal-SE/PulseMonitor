@@ -1,8 +1,9 @@
-import jsonpickle
 import re
-import tabulate
 
+import jsonpickle
+import tabulate
 import BotpySE as bp
+
 
 class Tag:
     def __init__(self, name, regex, user_id, user_name):

@@ -6,8 +6,10 @@
 # This file is licensed under the MIT License.
 #
 
-from BotpySE import Command, Utilities
 import subprocess
+
+from BotpySE import Command, Utilities
+
 
 class CommandUpdate(Command):
     @staticmethod

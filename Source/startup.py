@@ -3,6 +3,7 @@ import getpass
 
 from Pulse import *
 
+
 if 'PulseEmail' in os.environ:
     email = os.environ['PulseEmail']
 else:

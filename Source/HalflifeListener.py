@@ -8,6 +8,7 @@
 
 from WebsocketListener import WebsocketListener
 
+
 class HalflifeListener:
     def __init__(self, error_room, report_rooms, notifications=None, tags=None):
         self.error_room = error_room

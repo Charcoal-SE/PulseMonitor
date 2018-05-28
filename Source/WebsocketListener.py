@@ -6,8 +6,10 @@
 # This file is licensed under the MIT License.
 #
 
-import websocket
 import threading
+
+import websocket
+
 
 class WebsocketListener:
     def __init__(self, websocket_link, on_message_callback, notifications=None):
