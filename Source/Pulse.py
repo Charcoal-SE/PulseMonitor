@@ -1,6 +1,7 @@
 import os
 import subprocess
 import logging
+import time
 
 import BotpySE as bp
 import chatexchange as ce
@@ -15,6 +16,8 @@ from commands import *
 
 class Pulse:
     def __init__ (self, nick, email, password, rooms):
+        start_time = time.time()
+        
         commands = default_commands
         commands.extend([
             CommandUpdate,
@@ -65,7 +68,10 @@ class Pulse:
         #deep_smoke.start()
 
         while bot.is_alive:
-            pass
+            if (time.time() - start_time) > 21600: # time in seconds; currently set to six hours.
+                #Reboot the bot by running it again. https://stackoverflow.com/a/30247200/4688119
+                bot.stop()
+                os.execl(sys.executable, sys.executable, *sys.argv)
 
         halflife.stop()
         #deep_smoke.stop()
