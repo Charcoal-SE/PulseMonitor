@@ -68,7 +68,6 @@ class Notifications:
         self.save()
         return remove
 
-
     def filter_post(self, room, post):
         room = str(room)
         if room not in self.notifications:

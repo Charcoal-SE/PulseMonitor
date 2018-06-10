@@ -39,6 +39,17 @@ class TagManager:
                 return True
         return False
 
+    def remove_matching(self, expr):
+        r = re.compile(expr)
+        remove = []
+        for tag in self.tags:
+            if r.search(tag.regex):
+                remove.append(tag)
+        for tag in remove:
+            self.tags.remove(tag)
+        self.save()
+        return remove
+
     def filter_post(self, post):
         tags = list()
         for tag in self.tags:
@@ -94,15 +105,21 @@ class CommandAddTag(bp.Command):
 class CommandRemoveTag(bp.Command):
     @staticmethod
     def usage():
-        return ["removetag *", "remove tag *", "delete tag *", "destroy tag *", "poof tag *"]
+        return ["removetag ...", "remove tag ...", "delete tag ...", "destroy tag ...", "poof tag ...", "deletetag ..."]
 
     def privileges(self):
         return 1
 
     def run(self):
-        tag_name = self.arguments[0]
-        
-        if self.command_manager.tags.remove(tag_name):
-            self.reply("Removed [tag:{0}] successfully.".format(tag_name))
-        else:
-            self.reply("The specified tag does not exist; have you made a typo or specified that tag in a different case?")  
+        regex = ' '.join(self.arguments)
+
+        try:
+            removed = self.command_manager.tags.remove_matching(regex)
+        except re.error as re_err:
+            self.reply("Could not remove tag for regex `{0}`: `{1}`".format(regex, re_err))
+            return
+
+        if not removed:
+            self.reply("No tag found with regex `{0}`".format(regex))
+            return
+        self.reply("Removed {0} tags matching regex `{1}`.".format(len(removed), regex))       
