@@ -6,8 +6,11 @@
 # This file is licensed under the MIT License.
 #
 
-import websocket
 import threading
+import logging
+
+import websocket
+
 
 class WebsocketListener:
     def __init__(self, websocket_link, on_message_callback, notifications=None):
@@ -17,9 +20,9 @@ class WebsocketListener:
         self.closed = True
 
     def on_error(self, ws, error):
-        print("A websocket error occurred on websocket '" + self.websocket_link + "':")
-        print(error)
-    
+        logging.error("A websocket error occurred on websocket '" + self.websocket_link + "':")
+        logging.error(error)
+
     def on_close(self, ws):
         self.closed = True
         print("The websocket with link '" + self.websocket_link + "' was closed.")

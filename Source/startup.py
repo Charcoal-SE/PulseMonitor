@@ -1,7 +1,9 @@
 import os
 import getpass
+import logging
 
 from Pulse import *
+
 
 if 'PulseEmail' in os.environ:
     email = os.environ['PulseEmail']
@@ -13,4 +15,5 @@ if 'PulsePass' in os.environ:
 else:
     password = getpass.getpass("Password: ")
 
+logging.basicConfig(format='%(asctime)s:%(module)s:%(message)s', level=logging.INFO)
 Pulse("PulseMonitor", email, password, rooms=[65945])

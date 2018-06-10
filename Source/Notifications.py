@@ -1,5 +1,6 @@
 import json
 import re
+import logging
 
 from BotpySE import Command
 
@@ -89,7 +90,7 @@ class CommandNotifications(Command):
         return ["notifications"]
 
     def run(self):
-        print("NOTIFICATIONS")
+        logging.info("NOTIFICATIONS")
         for room, regex, user_id, user_name in \
                 self.command_manager.notifications.list():
             self.reply(
@@ -106,7 +107,7 @@ class CommandNotify(Command):
         user_id = self.message.user.id
         user_name = self.message.user.name
         regex = ' '.join(self.arguments)
-        print("NOTIFY {0} for {1}".format(user_id, user_name, regex))
+        logging.info("NOTIFY {0} for {1}".format(user_id, user_name, regex))
         try:
             self.command_manager.notifications.add(
                 room, regex, user_id, user_name)
@@ -125,7 +126,7 @@ class CommandUnnotify(Command):
         room = self.message.room.id
         user = self.message.user.id
         pat = ' '.join(self.arguments)
-        print("UNNOTIFY {0} for {1}".format(pat, self.message.user.name))
+        logging.info("UNNOTIFY {0} for {1}".format(pat, self.message.user.name))
         removed = []
         try:
             removed = self.command_manager.notifications.remove_matching(

@@ -6,8 +6,11 @@
 # This file is licensed under the MIT License.
 #
 
-from BotpySE import Command, Utilities
 import subprocess
+import logging
+
+from BotpySE import Command, Utilities
+
 
 class CommandUpdate(Command):
     @staticmethod
@@ -15,7 +18,7 @@ class CommandUpdate(Command):
         return ["update", "pull"]
 
     def run(self):
-        print("UPDATE")
+        logging.warn("UPDATE")
         subprocess.call(['git', 'pull', 'origin', 'master'])
         self.reply("Updating...")
         Utilities.StopReason.reboot = True

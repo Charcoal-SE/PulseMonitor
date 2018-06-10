@@ -1,5 +1,10 @@
+import os
+import subprocess
+import logging
+
 import BotpySE as bp
 import chatexchange as ce
+
 from HalflifeListener import *
 from DeepSmokeListener import *
 from CommandUpdate import *
@@ -7,8 +12,6 @@ from Notifications import *
 from Tagging import *
 from commands import *
 
-import os
-import subprocess
 
 class Pulse:
     def __init__ (self, nick, email, password, rooms):
@@ -20,7 +23,7 @@ class Pulse:
             CommandUnnotify,
             CommandListTags,
             CommandAddTag,
-            CommandRemoveTag 
+            CommandRemoveTag
             ])
 
         self._bot_header = '[ [PulseMonitor](https://github.com/Charcoal-SE/PulseMonitor) ]'
@@ -32,8 +35,8 @@ class Pulse:
                 key = file_handle.readlines()[0].rstrip('\n')
             bot.set_redunda_key(key)
         except IOError as ioerr:
-            print(str(ioerr))
-            print("Bot is not integrated with Redunda.")
+            logging.error(str(ioerr))
+            logging.warn("Bot is not integrated with Redunda.")
 
         bot.add_file_to_sync({"name": bot._storage_prefix + 'tags.json', "ispickle": False, "at_home": False})
         bot.add_file_to_sync({"name": bot._storage_prefix + 'notifications.json', "ispickle": False, "at_home": False})

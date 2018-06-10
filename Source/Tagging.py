@@ -1,8 +1,9 @@
-import jsonpickle
 import re
-import tabulate
 
+import jsonpickle
+import tabulate
 import BotpySE as bp
+
 
 class Tag:
     def __init__(self, name, regex, user_id, user_name):
@@ -19,7 +20,7 @@ class TagManager:
     def __init__(self, filename='./tags.json'):
         self.tags = list()
         self.filename = filename
-        
+
         try:
             with open(filename, 'r') as file_handle:
                 tags = jsonpickle.decode(file_handle.read())
@@ -92,7 +93,7 @@ class CommandAddTag(bp.Command):
     def run(self):
         user_id = self.message.user.id
         user_name = self.message.user.name
-        
+
         tag_name = self.arguments[0]
         regex = ' '.join(self.arguments[1:])
 

@@ -1,5 +1,6 @@
 import BotpySE as bp
 
+
 class CommandPrivilegeUser(bp.CommandPrivilegeUser):
     def privileges(self):
         return 1
