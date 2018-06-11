@@ -123,4 +123,4 @@ class CommandRemoveTag(bp.Command):
         if not removed:
             self.reply("No tag found with regex `{0}`".format(regex))
             return
-        self.reply("Removed {0} tags matching regex `{1}`.".format(len(removed), regex))       
+        self.reply("Removed {0} tags matching regex `{1}`.".format(len(removed), regex))
