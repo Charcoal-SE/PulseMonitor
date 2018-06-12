@@ -62,7 +62,7 @@ class Notifications:
         #except re.error:
         remove = []
         for room, regex, user_id, user_name in self.list():
-            if user_id == user and r.search(regex):
+            if int(user_id) == int(user) and r.search(regex):
                 remove.append(regex)
         for regex in remove:
             self.remove(room, regex, user_id)
