@@ -38,13 +38,28 @@ regex. Here's a quick example.
 
     you> @pulse notifications
     pulse> @you Active notification: tripleee '[23]/3'
-	you> @pulse notify .*
-	pulse> @you Added notification for you for '.*'
-	you> @pulse unnotify .
-	pulse> @you Removed notifications ['.*']
+    you> @pulse notify .*
+    pulse> @you Added notification for you for '.*'
+    you> @pulise notifications
+    pulse> @you Active notification: someone 'foobar'
+    pulse> @you Active notification: you '.*'
+    you> @pulse unnotify .
+    pulse> @you Removed notifications ['.*']
 
-Notice that the argument to `unnotify` can be substring which matches
+    you> @pulse addtag threshold [23]/3
+    pulse> @you added [tag:threshold] for regex [23]/3
+    you> @pulse removetag nonesvch
+    pulse> @you No tag found with regex nonesvch
+    you> @pulse listtags
+    pulse> | Name        | Regex      | Added by    |
+    pulse> |-------------+------------+-------------|
+    pulse> | threshold   | [23]/3     | you         |
+    pulse> | threshold   | (9|10)/10  | someone     |
+
+Notice that the argument to `unnotify` and `removetag` is a regex which can match
 more than one active pattern. You can only add and remove your own notifications.
 
 The notification mechanism simply pings @you when a matching line is printed to
-the chat transcript.
+the chat transcript.  Tagging adds a tag to the transcript which can be searched for
+with an expression like
+[tagged/tagname](https://chat.stackexchange.com/search?q=tagged%2Fthreshold&user=&room=65945)
