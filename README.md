@@ -11,7 +11,8 @@ Older versions have bugs which prevent PulseMonitor from working properly.
     pip install $(pwd)/ChatExchange
     pip install -r requirements.txt 
 
-Once that is done, copy the privileged user file to a directory in your home directory
+Once that is done, copy the privileged user file to a directory
+in your home directory
 named `.pulsemonitor`.
 
     mkdir ~/.pulsemonitor
@@ -21,7 +22,8 @@ You might want to add yourself as a privileged user. Load the file
 with `pickle`, change one of the user ID:s to your own, and save back
 and overwrite the pickle file.
 
-To enable Redunda, paste your redunda key in a file called `redunda_key.txt` at `~/.pulsemonitor/`.
+To enable Redunda, paste your redunda key
+in a file called `redunda_key.txt` at `~/.pulsemonitor/`.
 
 Then run the `startup.py` file.
 
@@ -37,7 +39,7 @@ The bot has commands to add, review, and remove notifications by
 regex. Here's a quick example.
 
     you> @pulse notifications
-    pulse> @you Active notification: tripleee '[23]/3'
+    pulse> @you Active notification: someone 'foobar'
     you> @pulse notify .*
     pulse> @you Added notification for you for '.*'
     you> @pulise notifications
@@ -56,10 +58,12 @@ regex. Here's a quick example.
     pulse> | threshold   | [23]/3     | you         |
     pulse> | threshold   | (9|10)/10  | someone     |
 
-Notice that the argument to `unnotify` and `removetag` is a regex which can match
-more than one active pattern. You can only add and remove your own notifications.
+Notice that the argument to `unnotify` and `removetag` is a regex
+which can match more than one active pattern.
+You can only add and remove your own notifications.
 
 The notification mechanism simply pings @you when a matching line is printed to
-the chat transcript.  Tagging adds a tag to the transcript which can be searched for
+the chat transcript.
+Tagging adds a tag to the transcript which can be searched for
 with an expression like
 [tagged/tagname](https://chat.stackexchange.com/search?q=tagged%2Fthreshold&user=&room=65945)
