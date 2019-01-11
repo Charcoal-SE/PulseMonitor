@@ -1,4 +1,4 @@
-chatexchange>=0.0.3
+chatexchange>=0.0.4
 BotpySE
 pyredunda
 tabulate
