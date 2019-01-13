@@ -29,6 +29,7 @@ class Pulse:
         self._bot_header = '[ [PulseMonitor](https://github.com/Charcoal-SE/PulseMonitor) ]'
 
         bot = bp.Bot(nick, commands, rooms, [], "stackexchange.com", email, password)
+        bot.add_alias("Halflife")
 
         try:
             with open(bot._storage_prefix + 'redunda_key.txt', 'r') as file_handle:
