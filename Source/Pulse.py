@@ -43,17 +43,23 @@ class Pulse:
             logging.error(str(ioerr))
             logging.warn("Bot is not integrated with Redunda.")
 
-        bot.add_file_to_sync({"name": bot._storage_prefix + 'tags.json', "ispickle": False, "at_home": False})
-        bot.add_file_to_sync({"name": bot._storage_prefix + 'notifications.json', "ispickle": False, "at_home": False})
+        bot.add_file_to_sync({"name": bot._storage_prefix + 'tags.json',
+            "ispickle": False, "at_home": False})
+        bot.add_file_to_sync({"name": bot._storage_prefix + 'notifications.json',
+            "ispickle": False, "at_home": False})
         bot.redunda_init(bot_version=version_hash)
         bot.set_redunda_default_callbacks()
         bot.set_redunda_status(True)
 
-        bot.set_startup_message(self._bot_header + " started on " + bot._location + ".")
-        bot.set_standby_message(self._bot_header + " running on " + bot._location + " shifting to standby.")
-        bot.set_failover_message(self._bot_header + " running on " + bot._location + " received failover.")
+        bot.set_startup_message(self._bot_header +
+            " started on " + bot._location + ".")
+        bot.set_standby_message(self._bot_header +
+            " running on " + bot._location + " shifting to standby.")
+        bot.set_failover_message(self._bot_header +
+            " running on " + bot._location + " received failover.")
 
-        notifications = Notifications(rooms, bot._storage_prefix + 'notifications.json')
+        notifications = Notifications(
+            rooms, bot._storage_prefix + 'notifications.json')
         tags = TagManager(bot._storage_prefix + 'tags.json')
         bot._command_manager.notifications = notifications
         bot._command_manager.tags = tags
@@ -63,7 +69,8 @@ class Pulse:
         bot.set_room_owner_privs_max()
 
         roomlist = bot._rooms
-        halflife = HalflifeListener(roomlist[0], roomlist, notifications, bot._command_manager.tags)
+        halflife = HalflifeListener(
+            roomlist[0], roomlist, notifications, bot._command_manager.tags)
         #deep_smoke = DeepSmokeListener(roomlist[0], roomlist, notifications)
 
         halflife.start()
@@ -76,4 +83,5 @@ class Pulse:
         #deep_smoke.stop()
 
     def _get_current_hash(self):
-        return subprocess.run(['git', 'log', '-n', '1', '--pretty=format:"%H"'], stdout=subprocess.PIPE).stdout.decode('utf-8')[1:7]
+        return subprocess.run(['git', 'log', '-n', '1', '--pretty=format:"%H"'],
+            stdout=subprocess.PIPE).stdout.decode('utf-8')[1:7]
