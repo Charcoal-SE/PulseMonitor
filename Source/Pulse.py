@@ -26,7 +26,11 @@ class Pulse:
             CommandRemoveTag
             ])
 
-        self._bot_header = '[ [PulseMonitor](https://github.com/Charcoal-SE/PulseMonitor) ]'
+        version_hash = self._get_current_hash()
+
+        self._bot_header = r'\[[PulseMonitor]' \
+            '(https://github.com/Charcoal-SE/PulseMonitor) ' + \
+                version_hash + r'\]'
 
         bot = bp.Bot(nick, commands, rooms, [], "stackexchange.com", email, password)
         bot.add_alias("Halflife")
@@ -41,7 +45,7 @@ class Pulse:
 
         bot.add_file_to_sync({"name": bot._storage_prefix + 'tags.json', "ispickle": False, "at_home": False})
         bot.add_file_to_sync({"name": bot._storage_prefix + 'notifications.json', "ispickle": False, "at_home": False})
-        bot.redunda_init(bot_version=self._get_current_hash())
+        bot.redunda_init(bot_version=version_hash)
         bot.set_redunda_default_callbacks()
         bot.set_redunda_status(True)
 
