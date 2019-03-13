@@ -33,7 +33,7 @@ class Notifications:
         user_id = str(user_id)
         self.users[user_id] = user_name
         try:
-            _ = re.compile(regex)
+            _ = re.compile(regex, re.I)
             self.notifications[room][regex].append(user_id)
         #except re.error: regex compilation failed
         except KeyError:
@@ -58,7 +58,7 @@ class Notifications:
                     yield room, regex, user, self.users[str(user)]
 
     def remove_matching(self, room, user, expr):
-        r = re.compile(expr)
+        r = re.compile(expr, re.I)
         #except re.error:
         remove = []
         for room, regex, user_id, user_name in self.list():
