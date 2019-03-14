@@ -107,6 +107,8 @@ class CommandNotify(Command):
         user_id = self.message.user.id
         user_name = self.message.user.name
         regex = ' '.join(self.arguments)
+        if regex.startswith('<code>') and regex.endswith('</code>'):
+            regex = regex[6:-7]                              
         logging.info("NOTIFY {0} for {1}".format(user_id, user_name, regex))
         try:
             self.command_manager.notifications.add(
