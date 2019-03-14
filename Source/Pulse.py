@@ -39,17 +39,18 @@ class Pulse:
             with open(bot._storage_prefix + 'redunda_key.txt', 'r') as file_handle:
                 key = file_handle.readlines()[0].rstrip('\n')
             bot.set_redunda_key(key)
+
+            bot.add_file_to_sync({"name": bot._storage_prefix + 'tags.json',
+                "ispickle": False, "at_home": False})
+            bot.add_file_to_sync({"name": bot._storage_prefix + 'notifications.json',
+                "ispickle": False, "at_home": False})
+            bot.redunda_init(bot_version=version_hash)
+            bot.set_redunda_default_callbacks()
+            bot.set_redunda_status(True)
+
         except IOError as ioerr:
             logging.error(str(ioerr))
             logging.warn("Bot is not integrated with Redunda.")
-
-        bot.add_file_to_sync({"name": bot._storage_prefix + 'tags.json',
-            "ispickle": False, "at_home": False})
-        bot.add_file_to_sync({"name": bot._storage_prefix + 'notifications.json',
-            "ispickle": False, "at_home": False})
-        bot.redunda_init(bot_version=version_hash)
-        bot.set_redunda_default_callbacks()
-        bot.set_redunda_status(True)
 
         bot.set_startup_message(self._bot_header +
             " started on " + bot._location + ".")
