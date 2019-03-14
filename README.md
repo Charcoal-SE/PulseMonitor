@@ -57,6 +57,10 @@ Notice that the argument to `unnotify` and `removetag` is a regex
 which can match more than one active pattern.
 You can only add and remove your own notifications.
 
+Because the Stack Exchange chat interface will do odd things to some
+special characters, you can optionally embed the regex
+for `notify` and `addtag` in `` `backticks` ``.
+
 The notification mechanism simply pings @you when a matching line is printed to
 the chat transcript.
 Tagging adds a tag to the transcript which can be searched for
