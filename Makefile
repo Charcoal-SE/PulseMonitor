@@ -4,7 +4,8 @@ docker-push: docker-build.log
 	docker push tripleee/pulsemonitor:latest
 
 docker-build.log: Dockerfile run.prod redunda_key.txt\
-		room_65945_name_Charcoal_Test_privileged_users
+		room_65945_name_Charcoal_Test_privileged_users \
+		Source/*.py requirements.txt
 	-awk '/^Successfully built/ { i=$$NF } END { if (i) print i }' $@ \
 	| xargs docker rmi
 	docker build --no-cache -t tripleee/pulsemonitor:latest . | tee $@
