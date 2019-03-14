@@ -33,25 +33,25 @@ the chat room.
 The bot has commands to add, review, and remove notifications by
 regex. Here's a quick example.
 
-    you> @pulse notifications
-    pulse> @you Active notification: someone 'foobar'
-    you> @pulse notify .*
-    pulse> @you Added notification for you for '.*'
-    you> @pulise notifications
-    pulse> @you Active notification: someone 'foobar'
-    pulse> @you Active notification: you '.*'
-    you> @pulse unnotify .
-    pulse> @you Removed notifications ['.*']
+    you> @halflife notifications
+    Halflife> @you Active notification: someone 'foobar'
+    you> @halflife notify .*
+    Halflife> @you Added notification for you for '.*'
+    you> @halflife notifications
+    Halflife> @you Active notification: someone 'foobar'
+    Halflife> @you Active notification: you '.*'
+    you> @halflife unnotify .
+    Halflife> @you Removed notifications ['.*']
 
-    you> @pulse addtag threshold [23]/3
-    pulse> @you added [tag:threshold] for regex [23]/3
-    you> @pulse removetag nonesvch
-    pulse> @you No tag found with regex nonesvch
-    you> @pulse listtags
-    pulse> | Name        | Regex      | Added by    |
-    pulse> |-------------+------------+-------------|
-    pulse> | threshold   | [23]/3     | you         |
-    pulse> | threshold   | (9|10)/10  | someone     |
+    you> @halflife addtag threshold [23]/3
+    Halflife> @you added [tag:threshold] for regex [23]/3
+    you> @halflife removetag nonesvch
+    Halflife> @you No tag found with regex nonesvch
+    you> @halflife listtags
+    Halflife> | Name        | Regex      | Added by    |
+    Halflife> |-------------+------------+-------------|
+    Halflife> | threshold   | [23]/3     | you         |
+    Halflife> | threshold   | (9|10)/10  | someone     |
 
 Notice that the argument to `unnotify` and `removetag` is a regex
 which can match more than one active pattern.
