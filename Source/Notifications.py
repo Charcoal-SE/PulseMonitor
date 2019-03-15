@@ -4,6 +4,9 @@ import logging
 
 from BotpySE import Command
 
+# Our own little re wrapper library
+import regex as re
+
 
 class Notifications:
     def __init__ (self, rooms, filename='./notifications.json'):
@@ -33,7 +36,7 @@ class Notifications:
         user_id = str(user_id)
         self.users[user_id] = user_name
         try:
-            _ = re.compile(regex, re.I)
+            _ = re.compile(regex)
             self.notifications[room][regex].append(user_id)
         #except re.error: regex compilation failed
         except KeyError:
@@ -107,8 +110,6 @@ class CommandNotify(Command):
         user_id = self.message.user.id
         user_name = self.message.user.name
         regex = ' '.join(self.arguments)
-        if regex.startswith('<code>') and regex.endswith('</code>'):
-            regex = regex[6:-7]                              
         logging.info("NOTIFY {0} for {1}".format(user_id, user_name, regex))
         try:
             self.command_manager.notifications.add(

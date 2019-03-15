@@ -1,8 +1,9 @@
-import re
-
 import jsonpickle
 import tabulate
 import BotpySE as bp
+
+# Our own little re wrapper library
+import regex as re
 
 
 class Tag:
@@ -96,8 +97,6 @@ class CommandAddTag(bp.Command):
 
         tag_name = self.arguments[0]
         regex = ' '.join(self.arguments[1:])
-        if regex.startswith('<code>') and regex.endswith('</code>'):
-            regex = regex[6:-7]
 
         try:
             self.command_manager.tags.add(Tag(tag_name, regex, user_id, user_name))
