@@ -104,6 +104,11 @@ class CommandAddTag(bp.Command):
         user_name = self.message.user.name
 
         tag_name = self.arguments[0]
+
+        if len(self.arguments) == 1:
+            self.reply('Need two arguments: tag and regex')
+            return
+
         regex = ' '.join(self.arguments[1:])
 
         try:
