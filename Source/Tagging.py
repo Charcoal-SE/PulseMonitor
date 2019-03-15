@@ -2,16 +2,16 @@ import jsonpickle
 import tabulate
 import BotpySE as bp
 
-# Our own little re wrapper library
+# Our own little re wrapper libraryo
 import regex as re
 
 
 class Tag:
     def __init__(self, name, regex, user_id, user_name):
-        _ = re.compile(regex)
+        normalized_regex = re.compile(regex).pattern
 
         self.name = name
-        self.regex = regex
+        self.regex = normalized_regex
         self.user_id = user_id
         self.user_name = user_name
 
