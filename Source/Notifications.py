@@ -36,8 +36,8 @@ class Notifications:
         user_id = str(user_id)
         self.users[user_id] = user_name
         try:
-            _ = re.compile(regex)
-            self.notifications[room][regex].append(user_id)
+            normalized = re.compile(regex)
+            self.notifications[room][normalized.pattern].append(user_id)
         #except re.error: regex compilation failed
         except KeyError:
             self.notifications[room][regex] = [user_id]
