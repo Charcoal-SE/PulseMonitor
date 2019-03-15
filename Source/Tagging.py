@@ -17,6 +17,7 @@ class Tag:
 
         self.format = "[tag:" + self.name + "]"
 
+
 class TagManager:
     def __init__(self, filename='./tags.json'):
         self.tags = list()
@@ -68,6 +69,7 @@ class TagManager:
         with open(self.filename, "w") as file_handle:
             file_handle.write(encoded)
 
+
 class CommandListTags(bp.Command):
     @staticmethod
     def usage():
@@ -78,15 +80,21 @@ class CommandListTags(bp.Command):
         for tag in self.command_manager.tags.list():
             tag_list.append([tag.name, tag.regex, tag.user_name])
 
-        table = tabulate.tabulate(tag_list, headers=["Name", "Regex", "Added By"], tablefmt="orgtbl")
+        table = tabulate.tabulate(
+            tag_list, headers=["Name", "Regex", "Added By"], tablefmt="orgtbl")
 
         self.post("    " + re.sub('\n', '\n    ', table), False)
+
 
 class CommandAddTag(bp.Command):
     @staticmethod
     def usage():
         # Regexes may have a space; thus last part of usage is always "..."
-        return ["addtag * ...", "add tag * ...", "add tag with name * and regex ...", "add tag * matching ...", "add tag * for ..."]
+        return [
+            "addtag * ...", "add tag * ...",
+            "add tag with name * and regex ...",
+            "add tag * matching ...",
+            "add tag * for ..."]
 
     def privileges(self):
         return 1
@@ -99,15 +107,21 @@ class CommandAddTag(bp.Command):
         regex = ' '.join(self.arguments[1:])
 
         try:
-            self.command_manager.tags.add(Tag(tag_name, regex, user_id, user_name))
+            self.command_manager.tags.add(
+                Tag(tag_name, regex, user_id, user_name))
             self.reply("Added [tag:{0}] for regex {1}".format(tag_name, regex))
         except re.error as err:
-            self.reply("Could not add tag for regex {0}: {1}".format(regex, err))
+            self.reply("Could not add tag for regex {0}: {1}".format(
+                regex, err))
+
 
 class CommandRemoveTag(bp.Command):
     @staticmethod
     def usage():
-        return ["removetag ...", "remove tag ...", "delete tag ...", "destroy tag ...", "poof tag ...", "deletetag ..."]
+        return [
+            "removetag ...", "remove tag ...",
+            "delete tag ...", "destroy tag ...",
+            "poof tag ...", "deletetag ..."]
 
     def privileges(self):
         return 1
@@ -118,10 +132,12 @@ class CommandRemoveTag(bp.Command):
         try:
             removed = self.command_manager.tags.remove_matching(regex)
         except re.error as re_err:
-            self.reply("Could not remove tag for regex `{0}`: `{1}`".format(regex, re_err))
+            self.reply("Could not remove tag for regex `{0}`: `{1}`".format(
+                regex, re_err))
             return
 
         if not removed:
             self.reply("No tag found with regex `{0}`".format(regex))
             return
-        self.reply("Removed {0} tags matching regex `{1}`.".format(len(removed), regex))
+        self.reply("Removed {0} tags matching regex `{1}`.".format(
+            len(removed), regex))
