@@ -1,5 +1,4 @@
-# ######## FIXME: upgrade code to be compatible with websocket-client>=0.54.0
-websocket-client==0.48.0
+websocket-client>=0.540
 chatexchange>=0.0.4
 BotpySE
 pyredunda

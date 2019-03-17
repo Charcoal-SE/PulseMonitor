@@ -16,7 +16,8 @@ class HalflifeListener:
         self.notifications = notifications
         self.tags = tags
         self.ws_link = "ws://ec2-52-208-37-129.eu-west-1.compute.amazonaws.com:8888/"
-        self.ws_listener = WebsocketListener(self.ws_link, self.on_message_handler)
+        self.ws_listener = WebsocketListener(
+            self.ws_link, lambda x, y: self.on_message_handler(x, y))
 
     def on_message_handler(self, ws, message):
         if self.tags is not None:
