@@ -20,17 +20,23 @@ class WebsocketListener:
         self.closed = True
 
     def on_error(self, ws, error):
-        logging.error("A websocket error occurred on websocket '" + self.websocket_link + "':")
+        logging.error("A websocket error occurred on websocket '{0}':".format(
+            self.websocket_link))
         logging.error(error)
 
     def on_close(self, ws):
         self.closed = True
-        print("The websocket with link '" + self.websocket_link + "' was closed.")
+        print( "The websocket with link '{0}' was closed.".format(
+            self.websocket_link))
 
     def start(self):
         self.closed = False
         websocket.enableTrace(True)
-        ws = websocket.WebSocketApp(self.websocket_link, on_error=self.on_error, on_close=self.on_close, on_message=self.on_message_callback)
+        ws = websocket.WebSocketApp(
+            self.websocket_link,
+            on_error=self.on_error,
+            on_close=self.on_close,
+            on_message=self.on_message_callback)
         ws_thread = threading.Thread(target = ws.run_forever)
         ws_thread.start()
         self.ws = ws
