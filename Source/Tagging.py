@@ -124,7 +124,7 @@ class CommandRemoveTag(bp.Command):
     @staticmethod
     def usage():
         return [
-            "removetag ...", "remove tag ...",
+            "removetag ...", "remove tag ...", "rmtag ...",
             "delete tag ...", "destroy tag ...",
             "poof tag ...", "deletetag ..."]
 
