@@ -99,7 +99,7 @@ class CommandNotifications(Command):
                 self.command_manager.notifications.list()]
         table = tabulate.tabulate(
             notifications, headers=["User", "Regex"], tablefmt="orgtbl")
-        self.reply('    ' + re.sub('\n', '\n    ', table), False)
+        self.post('    ' + re.sub('\n', '\n    ', table), False)
 
 
 class CommandNotify(Command):
