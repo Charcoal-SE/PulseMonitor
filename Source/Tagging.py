@@ -33,6 +33,7 @@ class TagManager:
     def add(self, tag):
         self.tags.append(tag)
         self.save()
+        return tag
 
     def remove(self, name):
         for tag in self.tags:
@@ -112,9 +113,10 @@ class CommandAddTag(bp.Command):
         regex = ' '.join(self.arguments[1:])
 
         try:
-            self.command_manager.tags.add(
+            newtag = self.command_manager.tags.add(
                 Tag(tag_name, regex, user_id, user_name))
-            self.reply("Added [tag:{0}] for regex {1}".format(tag_name, regex))
+            self.reply("Added [tag:{0}] for regex {1}".format(
+                newtag.name, newtag.regex))
         except re.error as err:
             self.reply("Could not add tag for regex {0}: {1}".format(
                 regex, err))
