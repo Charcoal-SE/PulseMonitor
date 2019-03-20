@@ -5,7 +5,8 @@ This is the chatbot component of
 It is currently running on the
 [Halflife bot account](https://chat.stackexchange.com/users/389741/halflife).
 
-To run PulseMonitor, you need to have the packages BotpySE and chatexchange
+To run PulseMonitor, you need to have
+the packages enumerated in `requirements.txt`
 installed on your computer.
 
 Once that is done, copy the privileged user file to a directory
