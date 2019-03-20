@@ -1,6 +1,8 @@
 # PulseMonitor
 
-This is the chatbot component of Halflife.  It is currently running on the
+This is the chatbot component of
+[Halflife](https://github.com/Charcoal-SE/halflife).
+It is currently running on the
 [Halflife bot account](https://chat.stackexchange.com/users/389741/halflife).
 
 To run PulseMonitor, you need to have the packages BotpySE and chatexchange
