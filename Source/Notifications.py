@@ -3,6 +3,7 @@ import re
 import logging
 
 from BotpySE import Command
+import tabulate
 
 # Our own little re wrapper library
 import regex as re
