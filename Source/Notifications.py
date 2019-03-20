@@ -43,6 +43,12 @@ class Notifications:
         except KeyError:
             self.notifications[room][regex] = [user_id]
         self.save()
+        return {
+            'user_name': user_name,
+            'room': room,
+            'user_id': user_id,
+            'regex': normalized.pattern
+        }
 
     def remove(self, room, regex, user):
         room = str(room)
@@ -114,12 +120,14 @@ class CommandNotify(Command):
         regex = ' '.join(self.arguments)
         logging.info("NOTIFY {0} for {1}".format(user_id, user_name, regex))
         try:
-            self.command_manager.notifications.add(
+            notification = self.command_manager.notifications.add(
                 room, regex, user_id, user_name)
             self.reply(
-                'Added notification for {0} for {1}'.format(user_name, regex))
+                'Added notification for {0} for {1}'.format(
+                    notification['user_name'], notification['regex']))
         except re.error as err:
-            self.reply('Could not add notification {0}: {1}'.format(regex, err))
+            self.reply('Could not add notification {0}: {1}'.format(
+                regex, err))
 
 
 class CommandUnnotify(Command):
