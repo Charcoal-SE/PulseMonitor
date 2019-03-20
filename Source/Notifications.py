@@ -94,10 +94,11 @@ class CommandNotifications(Command):
 
     def run(self):
         logging.info("NOTIFICATIONS")
-        for room, regex, user_id, user_name in \
-                self.command_manager.notifications.list():
-            self.reply(
-                "Active notification: {0} {1!r}".format(user_name, regex))
+        notifications = [[x[3], x[1]] for x in \
+                self.command_manager.notifications.list()]
+        table = tabulate.tabulate(
+            notifications, headers=["User", "Regex"], tablefmt="orgtbl")
+        self.reply('    ' + re.sub('\n', '\n    ', table), False)
 
 
 class CommandNotify(Command):
