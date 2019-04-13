@@ -6,8 +6,11 @@ RUN apk add --no-cache git && \
     adduser -D pulsemonitor && \
     cd /home/pulsemonitor && \
     su pulsemonitor sh -c 'mkdir .pulsemonitor && \
-      git clone https://github.com/Charcoal-SE/PulseMonitor' && \
-    pip install -r /home/pulsemonitor/PulseMonitor/requirements.txt && \
+      git clone https://github.com/Charcoal-SE/PulseMonitor && \
+      cd PulseMonitor && \
+      git checkout send-aggressively' && \
+    cd PulseMonitor && \
+    pip install -r requirements.txt && \
     rm -rf /var/cache/apk/*
 
 ADD --chown=pulsemonitor:pulsemonitor room_65945_name_Charcoal_Test_privileged_users /home/pulsemonitor/.pulsemonitor/
