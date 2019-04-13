@@ -32,7 +32,9 @@ class Pulse:
             '(https://github.com/Charcoal-SE/PulseMonitor) ' + \
                 version_hash + r'\]'
 
-        bot = bp.Bot(nick, commands, rooms, [], "stackexchange.com", email, password)
+        bot = bp.Bot(
+            nick, commands, rooms, [], "stackexchange.com", email, password,
+            send_aggressively=True)
         bot.add_alias("Halflife")
 
         try:

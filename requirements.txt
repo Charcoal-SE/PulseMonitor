@@ -1,5 +1,5 @@
 websocket-client>=0.54.0
-chatexchange>=0.0.4
-BotpySE
+git+https://github.com/Manishearth/ChatExchange.git
+git+https://github.com/tripleee/Botpy.git@send-aggressively
 pyredunda
 tabulate
