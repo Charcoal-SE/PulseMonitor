@@ -6,7 +6,7 @@ RUN apk add --no-cache git && \
     adduser -D pulsemonitor && \
     cd /home/pulsemonitor && \
     su pulsemonitor sh -c 'mkdir .pulsemonitor && \
-      git clone https://github.com/Charcoal-SE/PulseMonitor && \
+      git clone https://github.com/tripleee/PulseMonitor && \
       cd PulseMonitor && \
       git checkout send-aggressively' && \
     cd PulseMonitor && \
