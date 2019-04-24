@@ -8,7 +8,14 @@ RUN apk add --no-cache git && \
     su pulsemonitor sh -c 'mkdir .pulsemonitor && \
       git clone https://github.com/tripleee/PulseMonitor && \
       cd PulseMonitor && \
-      git checkout send-aggressively' && \
+      git checkout send-aggressively && \
+      cd .. && \
+      git clone https://github.com/tripleee/Botpy && \
+      cd Botpy && \
+      git checkout on-event-fix' && \
+    cd Botpy && \
+    pip install -e . && \
+    cd .. && \
     cd PulseMonitor && \
     pip install -r requirements.txt && \
     rm -rf /var/cache/apk/*
