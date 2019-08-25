@@ -1,4 +1,4 @@
-from re import compile, search, match, sub, I
+from re import compile, search, match, sub, I, error
 from html import unescape
 
 
