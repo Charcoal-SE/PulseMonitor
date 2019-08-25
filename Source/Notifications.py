@@ -9,6 +9,11 @@ import tabulate
 import regex as re
 
 
+def at_notification_name(username, _sub=re.compile(r"[^\w'.-]*").sub):
+    """Produce the @DisplayName notification normazilation form"""
+    return "@" + _sub('', username)
+
+
 class Notifications:
     def __init__ (self, rooms, filename='./notifications.json'):
         self.notifications = dict()
@@ -89,7 +94,7 @@ class Notifications:
                 notifications.update(self.notifications[room][regex])
         if notifications:
             return ' '.join([post] + [
-                '@{0}'.format(self.users[str(user)]) for user in notifications])
+                at_notification_name(self.users[str(user)]) for user in notifications])
         #else
         return post
 
