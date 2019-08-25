@@ -152,6 +152,9 @@ class CommandUnnotify(Command):
         except re.error as err:
             self.reply('Could not remove {0}: {1}'.format(pat, err))
             return False
+        except ValueError as err:
+            self.reply('Could not remove {0!r}: {1}'.format((room, user, pat), err))
+            return False
         if not removed:
             self.reply('No matches on {0}'.format(pat))
             return False
