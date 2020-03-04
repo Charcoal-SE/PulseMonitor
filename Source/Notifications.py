@@ -76,7 +76,9 @@ class Notifications:
         r = re.compile(expr, re.I)
         #except re.error:
         remove = []
-        for room, regex, user_id, user_name in self.list():
+        for room_id, regex, user_id, user_name in self.list():
+            if int(room_id) != int(room):
+                continue
             if int(user_id) == int(user) and r.search(regex):
                 remove.append(regex)
         for regex in remove:
