@@ -61,9 +61,11 @@ class Notifications:
         self.notifications[room][regex].remove(user)
         #except ValueError:  user not in list for regex
         #except KeyError: regex not in notifications
-        if self.notifications[room][regex] == []:
+        # If this was the only user with this regex, remove the regex
+        if not self.notifications[room][regex]:
             del self.notifications[room][regex]
-        if self.notifications[room] == {}:
+        # If this was the last regex, remove the regex container, too
+        if not self.notifications[room]:
             del self.notifications[room]
 
     def list(self):
