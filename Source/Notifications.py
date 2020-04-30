@@ -43,7 +43,7 @@ class Notifications:
         expected to obtain the lock.
 
         """
-        if filename is None:
+        if filename is None:  # pragma: no cover
             filename = self.filename
         with open(filename, "w", encoding="utf8") as notifications_file:
             json.dump([self.notifications, self.users], notifications_file)
