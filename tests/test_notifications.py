@@ -1,5 +1,9 @@
 import json
 import logging
+import time
+import threading
+import traceback
+from queue import SimpleQueue
 from types import SimpleNamespace
 from unittest import mock
 
@@ -218,7 +222,7 @@ class TestNotifications(_NotificationsTestsBase):
         assert sorted(msg[len(post) :].split()) == ["@EricIdle", "@MichaelPalin"]
 
 
-class TestCommands(_NotificationsTestsBase):
+class _CommandsTestsBase(_NotificationsTestsBase):
     def dispatch(self, content, room=17, user_id=13, user_name="Graham Chapman"):
         """Simulate BotpySE's command handling for tests"""
         from Notifications import CommandNotify, CommandNotifications, CommandUnnotify
@@ -246,6 +250,8 @@ class TestCommands(_NotificationsTestsBase):
 
         return output
 
+
+class TestCommands(_CommandsTestsBase):
     def test_notifications_empty(self):
         response = "    | User   | Regex   |\n    |--------+---------|"
         assert self.dispatch("notifications").post == [response]
@@ -368,3 +374,132 @@ class TestCommands(_NotificationsTestsBase):
         assert self.logs.records[1].msg == "CommandNotify.run(*(), **{}) failed"
         assert self.logs.records[1].exc_info[:2] == (type(exc), exc)
 
+
+def _wait_for(threads, timeout):
+    """wait *timeout* seconds for threads to exit
+
+    Returns True if all threads have exited, False otherwise.
+    """
+    end = time.monotonic() + timeout
+    while time.monotonic() < end and any(t.is_alive() for t in threads):
+        for thread in threads:
+            thread.join(0.1)
+    return not any(t.is_alive() for t in threads)
+
+
+class TestThreading(_CommandsTestsBase):
+    """Stress-test the commands and see if the final state is consistent.
+
+    This test can't definitively prove thread-safety but *should* fail if
+    there are problems, most of the time. You can verify that the test
+    fails if there is no thread-safity by using:
+
+        pytest -k test_threading --disable-notification-locking
+
+    """
+
+    THREADCOUNT = 23
+    TIMEOUT = 2.0  # seconds
+
+    _exit = threading.Event()
+
+    def runner(self, tid, exception_queue, *commands):
+        for command in commands:
+            if self._exit.is_set():
+                return
+            try:
+                self.dispatch(**command)
+            except Exception as exc:
+                exception_queue.put((tid, command, exc))
+                return
+
+    def test_threading(self):
+        # the command logging is rather noisy if the test fails, without
+        # adding anything useful.
+        self.logs.set_level(logging.CRITICAL, logger="Notifications")
+
+        # set up definitions for a few users and rooms to generate commands with
+        users = SimpleNamespace(
+            gc={"user_id": 13, "user_name": "Graham Chapman"},
+            mp={"user_id": 23, "user_name": "Michael Palin"},
+            ei={"user_id": 31, "user_name": "Eric Idle"},
+            tg={"user_id": 83, "user_name": "Terry Gilliam"},
+            jc={"user_id": 97, "user_name": "John Cleese"},
+        )
+        rooms = [{"room": 17}, {"room": 42}]
+
+        # series of arguments for _CommandsTestsBase.dispatch
+        commands = [
+            {**rooms[0], **users.tg, "content": "notifications"},
+            {**rooms[1], **users.jc, "content": "unnotify ^foobar$"},
+            {**rooms[0], **users.tg, "content": "notify ^foo .* bar$"},
+            {**rooms[0], **users.ei, "content": "notify ^spammy.*$"},
+            {**rooms[0], **users.gc, "content": "notifications"},
+            {**rooms[1], **users.ei, "content": "notify barry*"},
+            {**rooms[1], **users.jc, "content": "notify barry*"},
+            {**rooms[1], **users.jc, "content": "notify ^\\w+$"},
+            {**rooms[0], **users.tg, "content": "notify ^spammy.*$"},
+            {**rooms[0], **users.mp, "content": "notifications"},
+            {**rooms[0], **users.mp, "content": "notify \\b[45]/5\\b"},
+            {**rooms[0], **users.gc, "content": "notifications"},
+            {**rooms[0], **users.tg, "content": "notifications"},
+            {**rooms[1], **users.ei, "content": "notify ^\\w+$"},
+            {**rooms[1], **users.ei, "content": "unnotify barry*"},
+            {**rooms[1], **users.jc, "content": "unnotify ^foobar$"},
+            {**rooms[1], **users.gc, "content": "notify barbaz \\b[34]/6\\b"},
+            {**rooms[0], **users.ei, "content": "notify ^spammy.*$"},
+            {**rooms[1], **users.ei, "content": "notifications"},
+            {**rooms[1], **users.jc, "content": "unnotify ^foo.*$"},
+            {**rooms[1], **users.mp, "content": "unnotify ."},
+        ] * 29
+
+        exception_queue = SimpleQueue()
+        minsize, remainder = divmod(len(commands), self.THREADCOUNT)
+        threads = []
+        for i in range(self.THREADCOUNT):
+            tid = f"runner-{i}"
+            size = minsize + (1 if i < remainder else 0)
+            args = (tid, exception_queue, *commands[i : i + size])
+            # threads are marked as daemon threads so a deadlocked thread never
+            # holds up the test.
+            thread = threading.Thread(
+                target=self.runner, args=args, name=tid, daemon=True
+            )
+            threads.append(thread)
+            thread.start()
+
+        if not _wait_for(threads, self.TIMEOUT):
+            # test failed, threads didn't complete in the timeout.
+            # Attempt to recover by setting the exit event, then waiting another few
+            # seconds. This is just a courtesy at this point, as daemon threads won't
+            # block Python from exiting.
+            self._exit.set()
+            _wait_for(threads, 3)
+            pytest.fail("Threads didn't complete", False)
+
+        if not exception_queue.empty():
+            lines = ["One or more messages triggered an exception:\n"]
+            while not exception_queue.empty():
+                tid, command, exc = exception_queue.get(False)
+                lines.append(f"\nThread: {tid}\nCommand: {command}\n")
+                lines += traceback.format_exception(None, exc, exc.__traceback__)
+                del exc  # clear exception to avoid leaks
+
+            pytest.fail("".join(lines), False)
+
+        assert self.saved_notifications == {
+            "17": {
+                "\\b[45]/5\\b": ["23"],
+                "^foo .* bar$": ["83"],
+                "^spammy.*$": ["31", "83"],
+            },
+            "42": {
+                "^\\w+$": ["97", "31"],
+                "barbaz \\b[34]/6\\b": ["13"],
+                "barry*": ["97"],
+            },
+        }
+
+        assert self.saved_users == {
+            str(u["user_id"]): u["user_name"] for u in vars(users).values()
+        }
