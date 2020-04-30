@@ -270,14 +270,14 @@ class TestCommands(_CommandsTestsBase):
     def test_notify_case_sensitive(self):
         pat = "pat  with  spacing and UPPERCASE"
         output = self.dispatch(f"notify {pat}")
-        assert output.reply == [f"Added notification for Graham Chapman for {pat}"]
+        assert output.reply == [f"Added notification for Graham Chapman for `{pat}`"]
         assert self.saved_notifications == {"17": {pat: ["13"]}, "42": {}}
 
     def test_notify_invalid_pattern(self):
         pat = "(pat incomplete"
         output = self.dispatch(f"notify {pat}")
         assert output.reply == [
-            f"Could not add notification {pat}: "
+            f"Could not add notification `{pat}`: "
             "missing ), unterminated subpattern at position 0"
         ]
 
@@ -285,36 +285,42 @@ class TestCommands(_CommandsTestsBase):
         pat = ".*"
         self.notifications.add(17, pat, 13, "Graham Chapman")
         output = self.dispatch(f"notify {pat}")
-        assert output.reply == [f"Pattern {pat} already registered for Graham Chapman"]
+        assert output.reply == [
+            f"Pattern `{pat}` already registered for Graham Chapman"
+        ]
 
     def test_notify_normalised(self):
         pat = "Euro: \u20AC"
         pat_html = "<code>Euro: &euro;</code>"
         output = self.dispatch(f"notify {pat_html}")
-        assert output.reply == [f"Added notification for Graham Chapman for {pat}"]
+        assert output.reply == [f"Added notification for Graham Chapman for `{pat}`"]
 
         output = self.dispatch(f"notify {pat}")
-        assert output.reply == [f"Pattern {pat} already registered for Graham Chapman"]
+        assert output.reply == [
+            f"Pattern `{pat}` already registered for Graham Chapman"
+        ]
 
         output = self.dispatch(f"notify {pat_html}")
-        assert output.reply == [f"Pattern {pat} already registered for Graham Chapman"]
+        assert output.reply == [
+            f"Pattern `{pat}` already registered for Graham Chapman"
+        ]
 
         output = self.dispatch("notify <code>(</code>")
         assert output.reply == [
-            "Could not add notification (: "
+            "Could not add notification `(`: "
             "missing ), unterminated subpattern at position 0"
         ]
 
     def test_unnotify_missing(self):
         pat = "foo .* bar"
         output = self.dispatch(f"unnotify {pat}")
-        assert output.reply == [f"No matches on {pat} for Graham Chapman"]
+        assert output.reply == [f"No matches on `{pat}` for Graham Chapman"]
 
     def test_unnotify_invalid_pattern(self):
         pat = "(pat incomplete"
         output = self.dispatch(f"unnotify {pat}")
         assert output.reply == [
-            f"Could not remove notification {pat}: "
+            f"Could not remove notification `{pat}`: "
             "missing ), unterminated subpattern at position 0"
         ]
 
@@ -327,10 +333,10 @@ class TestCommands(_CommandsTestsBase):
         self.notifications.add(17, pat2, 13, "Graham Chapman")
 
         output = self.dispatch(f"unnotify {pat1}")
-        assert output.reply == [f"Removed notifications: {pat1}"]
+        assert output.reply == [f"Removed notifications: `{pat1}`"]
 
         output = self.dispatch(f"unnotify ^foo.*bar$")
-        assert output.reply == [f"Removed notifications: {pat2}"]
+        assert output.reply == [f"Removed notifications: `{pat2}`"]
 
     def test_unnotify_normalised(self):
         pat = "Euro: \u20AC"
@@ -338,14 +344,14 @@ class TestCommands(_CommandsTestsBase):
 
         pat_html = "<code>Euro: &euro;</code>"
         output = self.dispatch(f"unnotify {pat_html}")
-        assert output.reply == [f"Removed notifications: {pat}"]
+        assert output.reply == [f"Removed notifications: `{pat}`"]
 
         output = self.dispatch(f"unnotify {pat_html}")
-        assert output.reply == [f"No matches on {pat} for Graham Chapman"]
+        assert output.reply == [f"No matches on `{pat}` for Graham Chapman"]
 
         output = self.dispatch("unnotify <code>(</code>")
         assert output.reply == [
-            "Could not remove notification (: "
+            "Could not remove notification `(`: "
             "missing ), unterminated subpattern at position 0"
         ]
 

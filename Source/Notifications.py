@@ -20,6 +20,21 @@ def _at_notification(username, _sub=re.compile(r"[^\w'.-]*").sub):
     return "@" + _sub("", username)
 
 
+def _as_inline_code(text):
+    """Apply inline code markdown to text
+
+    Wrap text in backticks, escaping any embedded backticks first.
+
+    E.g:
+
+        >>> print(_as_inline_code("foo [`']* bar"))
+        `foo [\\`']* bar`
+
+    """
+    escaped = text.replace("`", r"\`")
+    return f"`{escaped}`"
+
+
 class Notifications:
     def __init__(self, rooms, filename="./notifications.json"):
         self.filename = filename
@@ -189,10 +204,11 @@ class NotificationsCommandBase(Command):
     and a raw_arg property for un-processed argument access.
 
     """
+
     def __init_subclass__(cls, **kwargs):
         super().__init_subclass__(**kwargs)
         # auto-decorate the run method in an exception handler.
-        if not getattr(cls.run, '_handle_exceptions', False):  # pragma: no cover
+        if not getattr(cls.run, "_handle_exceptions", False):  # pragma: no cover
             cls.run = _handle_exceptions(cls.run)
 
     def __init__(self, *args, **kwargs):
@@ -202,7 +218,7 @@ class NotificationsCommandBase(Command):
     @property
     def raw_arg(self):
         """Message argument as one string, with spaces and case preserved"""
-        command = self.usage()[self.usage_index].partition(' ')[0]
+        command = self.usage()[self.usage_index].partition(" ")[0]
         # TODO: would self.message.text_content be better here?
         message = self.message.content
         # remove command
@@ -234,17 +250,18 @@ class CommandNotify(NotificationsCommandBase):
         # Take pattern from original message to preserve case and spacing
         # then normalize (remove residual <code>...</code> HTML formatting)
         pattern = normalize(self.raw_arg)
+        markedup = _as_inline_code(pattern)
         logger.info(f"NOTIFY {user_id} in {room} for {pattern}")
         try:
             re.compile(pattern)
         except re.error as err:
-            self.reply(f"Could not add notification {pattern}: {err}")
+            self.reply(f"Could not add notification {markedup}: {err}")
             return
 
         if self.notifications.add(room, pattern, user_id, user_name):
-            self.reply(f"Added notification for {user_name} for {pattern}")
+            self.reply(f"Added notification for {user_name} for {markedup}")
         else:
-            self.reply(f"Pattern {pattern} already registered for {user_name}")
+            self.reply(f"Pattern {markedup} already registered for {user_name}")
 
 
 class CommandUnnotify(NotificationsCommandBase):
@@ -259,15 +276,19 @@ class CommandUnnotify(NotificationsCommandBase):
         # Take pattern from original message to preserve case and spacing
         # then normalize (remove residual <code>...</code> HTML formatting)
         pattern = normalize(self.raw_arg)
+        markedup = _as_inline_code(pattern)
         logger.info(f"UNNOTIFY {pattern} for {user_id} in {room}")
         try:
             re.compile(pattern)
         except re.error as err:
-            self.reply(f"Could not remove notification {pattern}: {err}")
+            self.reply(
+                f"Could not remove notification {markedup}: {err}"
+            )
             return
 
         removed = self.notifications.remove_matching(room, pattern, user_id)
         if removed:
-            self.reply(f"Removed notifications: {', '.join(removed)}")
+            joined = ", ".join([_as_inline_code(pat) for pat in removed])
+            self.reply(f"Removed notifications: {joined}")
         else:
-            self.reply(f"No matches on {pattern} for {user_name}")
+            self.reply(f"No matches on {markedup} for {user_name}")
