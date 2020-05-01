@@ -507,6 +507,10 @@ class TestThreading(_CommandsTestsBase):
             _wait_for(threads, 3)
             pytest.fail("Threads didn't complete", False)
 
+        # any issues with errors will have been reported by the thread runner
+        # so no need to report twice.
+        self.logs.clear()
+
         if not exception_queue.empty():
             lines = ["One or more messages triggered an exception:\n"]
             while not exception_queue.empty():
@@ -517,7 +521,6 @@ class TestThreading(_CommandsTestsBase):
 
             pytest.fail("".join(lines), False)
 
-        self.logs.clear()
         patterns = [p[7:] for p in messages if p != "notifications"]
         assert {
             rid: {p: sorted(users) for p, users in pat.items()}
