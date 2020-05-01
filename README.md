@@ -42,7 +42,7 @@ regex. Here's a quick example.
     Halflife> | you     | [23]/3    |
     Halflife> | someone | (9|10)/10 |
     you> @halflife notify .*
-    Halflife> @you Added notification for you for `.*``
+    Halflife> @you Added notification for you for `.*`
     you> @halflife notifications
     Halflife> | User    | Regex     |
     Halflife> |---------+-----------|
@@ -50,7 +50,7 @@ regex. Here's a quick example.
     Halflife> | someone | (9|10)/10 |
     Halflife> | you     | .*        |
     you> @halflife unnotify .
-    Halflife> @you Removed notifications `.*``
+    Halflife> @you Removed notifications `.*`
 
     you> @halflife addtag threshold [23]/3
     Halflife> @you added [tag:threshold] for regex [23]/3
