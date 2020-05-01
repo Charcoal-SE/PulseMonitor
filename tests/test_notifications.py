@@ -3,6 +3,7 @@ import logging
 import time
 import threading
 import traceback
+from itertools import product
 from queue import SimpleQueue
 from types import SimpleNamespace
 from unittest import mock
@@ -402,10 +403,15 @@ class TestThreading(_CommandsTestsBase):
 
         pytest -k test_threading --disable-notification-locking
 
+    To really push the issue, run the test repeatedly:
+
+        pip install pytest-repeat
+        pytest -k test_threading --count=100 -x --disable-notification-locking
+
     """
 
     THREADCOUNT = 23
-    TIMEOUT = 2.0  # seconds
+    TIMEOUT = 5.0  # seconds
 
     _exit = threading.Event()
 
@@ -415,64 +421,82 @@ class TestThreading(_CommandsTestsBase):
                 return
             try:
                 self.dispatch(**command)
+                for r in self.logs.records:
+                    if (
+                        r.threadName == tid  # triggered by this thread
+                        and r.levelno == logging.ERROR  # and it's an error
+                    ):
+                        exception_queue.put((tid, command, r.exc_info[1]))
+                        return
             except Exception as exc:
                 exception_queue.put((tid, command, exc))
                 return
 
     def test_threading(self):
-        # the command logging is rather noisy if the test fails, without
-        # adding anything useful.
-        self.logs.set_level(logging.CRITICAL, logger="Notifications")
+        # capture errors in commands
+        self.logs.set_level(logging.ERROR, logger="Notifications")
 
         # set up definitions for a few users and rooms to generate commands with
-        users = SimpleNamespace(
-            gc={"user_id": 13, "user_name": "Graham Chapman"},
-            mp={"user_id": 23, "user_name": "Michael Palin"},
-            ei={"user_id": 31, "user_name": "Eric Idle"},
-            tg={"user_id": 83, "user_name": "Terry Gilliam"},
-            jc={"user_id": 97, "user_name": "John Cleese"},
+        users = {
+            13: "Graham Chapman",
+            23: "Michael Palin",
+            83: "Terry Gilliam",
+            97: "John Cleese",
+        }
+        rooms = (17, 42)
+        messages = (
+            "notify ^foobar$",
+            "notifications",
+            "notify ^foo .* bar$",
+            "notifications",
+            "notify ^spammy.*$",
+            "notifications",
+            "notify barry*",
+            "notifications",
+            "notify ^\\w+$",
+            "notifications",
         )
-        rooms = [{"room": 17}, {"room": 42}]
 
         # series of arguments for _CommandsTestsBase.dispatch
         commands = [
-            {**rooms[0], **users.tg, "content": "notifications"},
-            {**rooms[1], **users.jc, "content": "unnotify ^foobar$"},
-            {**rooms[0], **users.tg, "content": "notify ^foo .* bar$"},
-            {**rooms[0], **users.ei, "content": "notify ^spammy.*$"},
-            {**rooms[0], **users.gc, "content": "notifications"},
-            {**rooms[1], **users.ei, "content": "notify barry*"},
-            {**rooms[1], **users.jc, "content": "notify barry*"},
-            {**rooms[1], **users.jc, "content": "notify ^\\w+$"},
-            {**rooms[0], **users.tg, "content": "notify ^spammy.*$"},
-            {**rooms[0], **users.mp, "content": "notifications"},
-            {**rooms[0], **users.mp, "content": "notify \\b[45]/5\\b"},
-            {**rooms[0], **users.gc, "content": "notifications"},
-            {**rooms[0], **users.tg, "content": "notifications"},
-            {**rooms[1], **users.ei, "content": "notify ^\\w+$"},
-            {**rooms[1], **users.ei, "content": "unnotify barry*"},
-            {**rooms[1], **users.jc, "content": "unnotify ^foobar$"},
-            {**rooms[1], **users.gc, "content": "notify barbaz \\b[34]/6\\b"},
-            {**rooms[0], **users.ei, "content": "notify ^spammy.*$"},
-            {**rooms[1], **users.ei, "content": "notifications"},
-            {**rooms[1], **users.jc, "content": "unnotify ^foo.*$"},
-            {**rooms[1], **users.mp, "content": "unnotify ."},
-        ] * 29
+            {"room": rid, "user_id": uid, "user_name": users[uid], "content": cmd,}
+            for cmd, uid, rid in product(messages, users, rooms)
+        ]
+        # A single pattern registered to a single user causes the
+        # notifications[roomid] dictionary to grow and shrink repeatedly
+        # which can cause errors if something else is also iterating over
+        # the same.
+        iuid, iuname = 31, "Eric Idle"
+        interference = [
+            {"room": rid, "user_id": iuid, "user_name": iuname, "content": c}
+            for rid, c in product(
+                rooms, ("notify \\b[45]/5\\b", "unnotify \\b[45]/5\\b")
+            )
+        ] * (len(commands) // 4)
 
         exception_queue = SimpleQueue()
-        minsize, remainder = divmod(len(commands), self.THREADCOUNT)
-        threads = []
-        for i in range(self.THREADCOUNT):
-            tid = f"runner-{i}"
-            size = minsize + (1 if i < remainder else 0)
-            args = (tid, exception_queue, *commands[i : i + size])
-            # threads are marked as daemon threads so a deadlocked thread never
-            # holds up the test.
-            thread = threading.Thread(
-                target=self.runner, args=args, name=tid, daemon=True
-            )
-            threads.append(thread)
-            thread.start()
+        # threads are marked as daemon threads so a deadlocked thread never
+        # holds up the test.
+        threads = [
+            threading.Thread(
+                target=self.runner,
+                args=("notify", exception_queue, *commands),
+                name="notify",
+                daemon=True,
+            ),
+            *(
+                threading.Thread(
+                    target=self.runner,
+                    args=(f"interference-{i}", exception_queue, *interference),
+                    name=f"interference-{i}",
+                    daemon=True,
+                )
+                for i in range(self.THREADCOUNT - 1)
+            ),
+        ]
+
+        for t in threads:
+            t.start()
 
         if not _wait_for(threads, self.TIMEOUT):
             # test failed, threads didn't complete in the timeout.
@@ -493,19 +517,17 @@ class TestThreading(_CommandsTestsBase):
 
             pytest.fail("".join(lines), False)
 
-        assert self.saved_notifications == {
-            "17": {
-                "\\b[45]/5\\b": ["23"],
-                "^foo .* bar$": ["83"],
-                "^spammy.*$": ["31", "83"],
-            },
-            "42": {
-                "^\\w+$": ["97", "31"],
-                "barbaz \\b[34]/6\\b": ["13"],
-                "barry*": ["97"],
-            },
+        self.logs.clear()
+        patterns = [p[7:] for p in messages if p != "notifications"]
+        assert {
+            rid: {p: sorted(users) for p, users in pat.items()}
+            for rid, pat in self.saved_notifications.items()
+        } == {
+            str(rid): {pat: [str(uid) for uid in sorted(users)] for pat in patterns}
+            for rid in rooms
         }
 
+        users[iuid] = iuname  # the interference user also registered
         assert self.saved_users == {
-            str(u["user_id"]): u["user_name"] for u in vars(users).values()
+            str(uid): user_name for uid, user_name in users.items()
         }
