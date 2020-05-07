@@ -1,5 +1,6 @@
 import json
 import logging
+import re
 import time
 import threading
 import traceback
@@ -223,18 +224,27 @@ class TestNotifications(_NotificationsTestsBase):
         assert sorted(msg[len(post) :].split()) == ["@EricIdle", "@MichaelPalin"]
 
 
+# extract just the word groups at the start
+_clean_usage = re.compile(r'^(?:\w+[ ])*\w+').search
+
+
 class _CommandsTestsBase(_NotificationsTestsBase):
     def dispatch(self, content, room=17, user_id=13, user_name="Graham Chapman"):
         """Simulate BotpySE's command handling for tests"""
-        from Notifications import CommandNotify, CommandNotifications, CommandUnnotify
+        from Notifications import NotificationsCommandBase
 
         commands = {
-            c.usage()[0].split(None, 1)[0]: c
-            for c in (CommandNotify, CommandNotifications, CommandUnnotify)
+            _clean_usage(usage)[0]: c
+            for c in NotificationsCommandBase.__subclasses__()
+            for usage in c.usage()
         }
 
         # BotpySE lowercases messages when building the argument list
         cmd, *arguments = content.lower().split()
+
+        # Handle commands with more than one word
+        while arguments and cmd not in commands:
+            cmd = f"{cmd} {arguments.pop(0)}"
 
         # mock out a command manager, user, room and message object
         command_manager = mock.Mock(notifications=self.notifications)
