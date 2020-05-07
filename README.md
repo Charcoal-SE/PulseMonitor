@@ -49,6 +49,12 @@ regex. Here's a quick example.
     Halflife> | you     | [23]/3    |
     Halflife> | someone | (9|10)/10 |
     Halflife> | you     | .*        |
+    you> @halflife my notifications
+    Halflife> | you       |
+    Halflife> | Regex     |
+    Halflife> |-----------|
+    Halflife> | [23]/3    |
+    Halflife> | .*        |    
     you> @halflife unnotify .
     Halflife> @you Removed notifications `.*`
 

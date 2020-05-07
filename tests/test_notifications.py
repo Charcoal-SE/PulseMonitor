@@ -68,15 +68,33 @@ class TestNotifications(_NotificationsTestsBase):
     def test_list_filtered(self):
         notifications = self.notifications
         notifications.add(17, r"foo .* bar", 13, "Graham Chapman")
+        notifications.add(42, r"foo .* bar", 13, "Graham Chapman")
         notifications.add(42, r"Monty (Python|Hall)", 23, "Terry Gilliam")
 
-        assert list(notifications.list(17)) == [
+        assert list(notifications.list(room=17)) == [
             ("17", "foo .* bar", "13", "Graham Chapman")
         ]
-        assert list(notifications.list(42)) == [
+        assert list(notifications.list(room=42)) == [
+            ("42", "foo .* bar", "13", "Graham Chapman"),
             ("42", "Monty (Python|Hall)", "23", "Terry Gilliam"),
         ]
-        assert list(notifications.list(9999)) == []
+
+        assert list(notifications.list(user=13)) == [
+            ("17", "foo .* bar", "13", "Graham Chapman"),
+            ("42", "foo .* bar", "13", "Graham Chapman"),
+        ]
+        assert list(notifications.list(user=23)) == [
+            ("42", "Monty (Python|Hall)", "23", "Terry Gilliam"),
+        ]
+
+        assert list(notifications.list(room=42, user=13)) == [
+            ("42", "foo .* bar", "13", "Graham Chapman"),
+        ]
+
+        assert list(notifications.list(room=9999)) == []
+        assert list(notifications.list(room=9999, user=13)) == []
+        assert list(notifications.list(user=9999)) == []
+        assert list(notifications.list(room=42, user=9999)) == []
 
     def test_add(self):
         notifications = self.notifications
@@ -267,8 +285,10 @@ class TestCommands(_CommandsTestsBase):
         response = "    | User   | Regex   |\n    |--------+---------|"
         assert self.dispatch("notifications").post == [response]
         assert self.dispatch("notifications", room=42).post == [response]
+        assert self.dispatch("all notifications").post == [response]
+        assert self.dispatch("all notifications", room=42).post == [response]
 
-    def test_list_filtered(self):
+    def test_notifications_filtered(self):
         notifications = self.notifications
         notifications.add(17, r"foo .* bar", 13, "Graham Chapman")
         notifications.add(42, r"Monty (Python|Hall)", 23, "Terry Gilliam")
@@ -276,6 +296,30 @@ class TestCommands(_CommandsTestsBase):
         output = self.dispatch("notifications")
         assert output.post[0].splitlines()[2:] == [
             "    | Graham Chapman | foo .* bar |"
+        ]
+
+        assert self.dispatch("all notifications").post == output.post
+
+    def test_my_notifications_empty(self):
+        response = (
+            "    | Graham Chapman   |\n"
+            "    | Regex            |\n"
+            "    |------------------|"
+        )
+        assert self.dispatch("my notifications").post == [response]
+        assert self.dispatch("my notifications", room=42).post == [response]
+
+    def test_my_notifications_filtered(self):
+        notifications = self.notifications
+        notifications.add(17, r"foo .* bar", 13, "Graham Chapman")
+        notifications.add(17, r"^spammy.*$", 97, "John Cleese")
+        notifications.add(42, r"foo", 23, "Terry Gilliam")
+
+        output = self.dispatch("my notifications")
+        lines = output.post[0].splitlines()
+        assert lines[0] == "    | Graham Chapman   |"
+        assert lines[3:] == [
+            "    | foo .* bar       |"
         ]
 
     def test_notify_case_sensitive(self):
