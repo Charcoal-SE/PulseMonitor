@@ -1,4 +1,4 @@
-.PHONY: build docker-push
+.PHONY: build docker-push tests
 build: docker-build.log
 docker-push: docker-build.log
 	docker push tripleee/pulsemonitor:latest
@@ -18,6 +18,7 @@ run.prod:
 clean:
 	:
 realclean: clean
+	$(RM) -rf venv .coverage .pytest_cache
 	-image=$$(awk 'END { print $$NF }' docker-build.log) \
 	&& docker ps -q -f ancestor=$$image \
 	| xargs -r docker kill \
@@ -25,3 +26,12 @@ realclean: clean
 	$(RM) docker-build.log
 distclean: realclean
 	:
+
+venv:
+	python3 -m venv venv
+	venv/bin/pip install --upgrade pip
+	venv/bin/pip install -r requirements.txt
+	venv/bin/pip install pytest pytest-cov
+
+tests: venv
+	venv/bin/pytest

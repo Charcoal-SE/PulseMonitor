@@ -37,14 +37,20 @@ The bot has commands to add, review, and remove notifications by
 regex. Here's a quick example.
 
     you> @halflife notifications
-    Halflife> @you Active notification: someone 'foobar'
+    Halflife> | User    | Regex     |
+    Halflife> |---------+-----------|
+    Halflife> | you     | [23]/3    |
+    Halflife> | someone | (9|10)/10 |
     you> @halflife notify .*
-    Halflife> @you Added notification for you for '.*'
+    Halflife> @you Added notification for you for `.*`
     you> @halflife notifications
-    Halflife> @you Active notification: someone 'foobar'
-    Halflife> @you Active notification: you '.*'
+    Halflife> | User    | Regex     |
+    Halflife> |---------+-----------|
+    Halflife> | you     | [23]/3    |
+    Halflife> | someone | (9|10)/10 |
+    Halflife> | you     | .*        |
     you> @halflife unnotify .
-    Halflife> @you Removed notifications ['.*']
+    Halflife> @you Removed notifications `.*`
 
     you> @halflife addtag threshold [23]/3
     Halflife> @you added [tag:threshold] for regex [23]/3
