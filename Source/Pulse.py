@@ -8,7 +8,7 @@ import chatexchange as ce
 from HalflifeListener import *
 from DeepSmokeListener import *
 from CommandUpdate import *
-from Notifications import *
+from Notifications import NotificationsCommandBase
 from Tagging import *
 from commands import *
 
@@ -18,9 +18,7 @@ class Pulse:
         commands = default_commands
         commands.extend([
             CommandUpdate,
-            CommandNotifications,
-            CommandNotify,
-            CommandUnnotify,
+            *NotificationsCommandBase.__subclasses__(),
             CommandListTags,
             CommandAddTag,
             CommandRemoveTag

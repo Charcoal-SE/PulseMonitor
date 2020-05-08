@@ -89,24 +89,32 @@ class Notifications:
             self._save()
             return True
 
-    def list(self, room=None):
+    def list(self, room=None, user=None):
         """Generate all notification entries
 
         Entries are yielded as (room_id, regex, user_id, username) tuples
 
-        If room is not None, then the list is filtered by that room.
+        If room and/or user are not None, then the list is filtered by the
+        given room and user.
 
         """
+        if room is not None:
+            room = str(room)
+        if user is not None:
+            user = str(user)
         with self._lock:
             # minimise locking time by creating a copy to iterate over
             notifications = deepcopy(self.notifications)
 
         for room_id, regexes in notifications.items():
-            if not (room is None or str(room) == room_id):
+            if not (room is None or room == room_id):
                 continue
             for regex, users in regexes.items():
-                for user_id in users:
-                    yield room_id, regex, user_id, self.users[user_id]
+                if user is None:
+                    for user_id in users:
+                        yield room_id, regex, user_id, self.users[user_id]
+                elif user in users:
+                    yield room_id, regex, user, self.users[user]
 
     def _remove(self, room, regex, user):
         """Helper function for remove_matching to remove matched patterns
@@ -228,13 +236,30 @@ class NotificationsCommandBase(Command):
 class CommandNotifications(NotificationsCommandBase):
     @staticmethod
     def usage():
-        return ["notifications"]
+        return ["notifications", "all notifications"]
 
     def run(self):
         room = str(self.message.room.id)
         logger.info(f"NOTIFICATIONS by {self.message.user.id} in {room}")
-        entries = [[user, pat] for _, pat, _, user in self.notifications.list(room)]
+        entries = [[u, p] for _, p, _, u in self.notifications.list(room=room)]
         table = tabulate.tabulate(entries, headers=["User", "Regex"], tablefmt="orgtbl")
+        self.post(indent(table, "    "), False)
+
+
+class CommandMyNotifications(NotificationsCommandBase):
+    @staticmethod
+    def usage():
+        return ["my notifications"]
+
+    def run(self):
+        room = str(self.message.room.id)
+        user_id = self.message.user.id
+        user_name = self.message.user.name
+        logger.info(f"MY NOTIFICATIONS by {user_id} in {room}")
+        entries = [[p] for _, p, *_ in self.notifications.list(room=room, user=user_id)]
+        table = tabulate.tabulate(
+            entries, headers=[f"{user_name}\nRegex"], tablefmt="orgtbl"
+        )
         self.post(indent(table, "    "), False)
 
 
@@ -281,9 +306,7 @@ class CommandUnnotify(NotificationsCommandBase):
         try:
             re.compile(pattern)
         except re.error as err:
-            self.reply(
-                f"Could not remove notification {markedup}: {err}"
-            )
+            self.reply(f"Could not remove notification {markedup}: {err}")
             return
 
         removed = self.notifications.remove_matching(room, pattern, user_id)
