@@ -8,7 +8,7 @@ import chatexchange as ce
 from HalflifeListener import *
 from DeepSmokeListener import *
 from CommandUpdate import *
-from Notifications import NotificationsCommandBase
+from Notifications import Notifications, NotificationsCommandBase
 from Tagging import *
 from commands import *
 
