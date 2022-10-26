@@ -1,14 +1,19 @@
+DOCKER_REPO  := tripleee
+DOCKER_PROJ  := pulsemonitor
+DOCKER_TAG   := latest
+DOCKER_IMAGE := $(DOCKER_REPO)/$(DOCKER_PROJ):$(DOCKER_TAG)
+
 .PHONY: build docker-push tests
 build: docker-build.log
 docker-push: docker-build.log
-	docker push tripleee/pulsemonitor:latest
+	docker push $(DOCKER_IMAGE)
 
 docker-build.log: Dockerfile run.prod redunda_key.txt location.txt \
 		room_65945_name_Charcoal_Test_privileged_users \
 		Source/*.py requirements.txt
 	-awk '/^Successfully built/ { i=$$NF } END { if (i) print i }' $@ \
 	| xargs docker rmi
-	docker build --no-cache -t tripleee/pulsemonitor:latest . | tee $@
+	docker build --no-cache --progress=plain $(DOCKER_IMAGE) . | tee $@
 
 run.prod:
 	@echo Copy the file run and update it with your bot\'s credentials >&2
