@@ -6,4 +6,5 @@ while true; do
     PulseEmail='XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX' \
     PulsePass='XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX' \
     python3 ./Source/startup.py
+    sleep 300
 done
